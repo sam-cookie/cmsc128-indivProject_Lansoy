@@ -1,0 +1,90 @@
+html {
+    font-family: 'Inter', sans-serif;
+}
+
+h1, h2 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+h3 {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+body {
+    margin: 0;
+}
+
+.side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 13rem;
+    background-color: #333;
+    color: white;
+    padding-top: 1rem;
+}
+
+#sidebar-title {
+    background-color: #333;
+    color: white;
+    border: 1px solid #ffffff;
+    border-radius: 0.2rem;
+    font-size: 0.6rem;
+    font-weight: 400;
+    align-items:center;
+}
+
+.profile {
+    display: flex;
+    gap: 1rem;
+    font-size: 1rem;
+}
+
+.profile img {
+    margin-left: 1rem;
+    height: 3.5rem;
+    width: 3.5rem;
+    border-radius: 50%;
+}
+
+.main {
+    margin-left: 13rem;
+}
+
+.header {
+    padding: 1rem;
+    border-bottom: 1px solid #ccc;
+}
+
+#title-input, #description-input {
+    width: 100%;
+    font-size: 2rem;
+    font-weight: 700;
+    border: none;
+    outline: none;
+}
+
+#description-input {
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 0.5rem;
+}
+
+#task-input {
+    width: 100%;
+    font-size: 1rem;
+    border: none;
+    outline: none;
+    margin-top: 5rem;
+    margin-left: 3rem;
+}
+
+#task-list {
+    padding: 0;
+    margin-top: 3rem;
+    margin-left: 6rem;
+    list-style-type: none;
+}
