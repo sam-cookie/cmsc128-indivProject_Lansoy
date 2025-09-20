@@ -1,5 +1,7 @@
-function addDescription(element){
+function addDescription() {
     const descriptionInput = document.getElementById('description-input');
+    const taskInput = document.getElementById('task-input');
+    const taskList = document.getElementById('task-list');
 
     taskInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter' && descriptionInput.value.trim() !== '') {
@@ -8,8 +10,7 @@ function addDescription(element){
             taskList.appendChild(description);
             descriptionInput.value = '';
         }
-    }
-    );
+    });
 }
 
 
@@ -25,17 +26,33 @@ function addTitle() {
     });
 }
 
-function addTask(element) {
+function addTask() {
     const taskInput = document.getElementById('task-input');
-    const taskList = document.getElementById('task-list'); 
-
+    const taskList = document.getElementById('task-list');
+    const dateInput = document.getElementById('date-input-input');
+    const sidebarTitle = document.getElementById('sidebar-title');
 
     taskInput.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter' && taskInput.value.trim() !== '') {
+        if (
+            event.key === 'Enter' &&
+            taskInput.value.trim() !== '' &&
+            dateInput.value.trim() !== ''
+        ) {
             const li = document.createElement('li');
-            li.textContent = taskInput.value.trim();
+            li.textContent = `${taskInput.value.trim()} (DUE: ${dateInput.value.trim()})`;
+                if (taskList.children.length === 0) {
+                    sidebarTitle.style.display = "none";
+                }
+            });
+
+            li.appendChild(delBtn);
             taskList.appendChild(li);
+
+    
+            sidebarTitle.style.display = "block";
+
             taskInput.value = '';
+            dateInput.value = '';
         }
     });
 }
