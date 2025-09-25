@@ -1,31 +1,40 @@
 <html>
-<head>
-    <title>TO DO LIST</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-</head>
-<body>
-    <div class="main">
-        <div class="header">
-            <input type="text" id="title-input" placeholder="Add title">
-            <input type="text" id="description-input" placeholder="Add description...">
-            <input type="date" id="date-input-header">
+    <head>
+        <title>TO DO LIST</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-calendar@2.4.0/dist/vanilla-calendar.min.css">
+    </head>
+    <body>
+        <div class="main">
+            <!-- <div class="header">
+                <input type="text" id="title-input" placeholder="sAdd title">
+                <input type="text" id="description-input" placeholder="Add description...">
+                <input type="date" id="date-input-header">
+            </div> -->
+            <div class="input-section">
+                <input type="text" id="task-input" placeholder="Enter a new task...">
+                <label for="priority-select">Priority:</label>
+                <select id="priority-select" name="priority">
+                    <option value="high">High</option>
+                    <option value="mid">Mid</option>
+                    <option value="low">Low</option>
+                </select>
+                <input type="date" id="date-input-input">
+                <button id="add-task-button">Add Task</button>
+            </div>
+            <div class="calendar-container" id="full-calendar-container">
+                <div class="vanilla-calendar"></div>
+            </div>
+            <ul id="task-list"></ul>
         </div>
-        <div class="input-section">
-            <input type="text" id="task-input" placeholder="Enter a new task...">
-            <input type="date" id="date-input-input">
+        <div class="side-bar">
+            <div class="profile">
+                <img src="pfp.png" alt="Profile Picture">
+                <h2>Hello, user!</h2>
+            </div>
+            <div class="tasks">
+                <button id="sidebar-title"></button>
+            </div>
         </div>
-        <ul id="task-list"></ul>
-    </div>
-    <div class="side-bar">
-        <div class="profile">
-            <img src="pfp.png" alt="Profile Picture">
-            <h2>Hello, user!</h2>
-        </div>
-        <div class="tasks">
-            <button id="sidebar-title"></button>
-        </div>
-    </div>
-
-
+    </body>
 </html>
