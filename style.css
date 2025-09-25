@@ -15,6 +15,7 @@ h3 {
 body {
     overflow-x: hidden;
     margin: 0;
+    background-color: #EFE4D2;
 }
 
 .side-bar {
@@ -91,8 +92,8 @@ input[type="date"] {
     border: 1px solid #ccc;
     border-radius: 0.3rem;
     padding: 0.8rem;
-    margin: 1rem 0 1rem 1rem; 
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    margin: 2rem auto 2rem auto;
+    box-shadow: 0 1px 4px rgba(36, 67, 69, 0.6);
     width: fit-content;
     align-self: flex-start; 
 }
@@ -113,12 +114,44 @@ input[type="date"] {
     font-size: 0.8rem;
     font-weight: 500;
     color: white;
-    background-color: #000000;
+    background-color: #3F4F44;
     cursor: pointer;
     margin-left: 1rem;
 }
 
 #add-task-button:hover {
-    background-color: #555555;
+    background-color: #2C3930;
 }
 
+.tasks-container {
+    display: flex;
+    gap: 2rem; 
+    margin-left: 15rem; 
+}
+
+.not-yet-started,
+.in-progress,
+.completed {
+    color: white;
+    position: static;
+    flex-direction: column;
+    min-height: 60vh;
+    width: 20rem;
+    max-width: 100%;
+    border-radius: 0.3rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    padding: 20px;
+    margin: 0 auto;             
+    z-index: 1;
+}
+
+.not-yet-started {
+    background-color:#261FB3;
+}
+
+.in-progress {
+    background-color: #161179;
+}
+.completed {
+    background-color: #0C0950;
+}
