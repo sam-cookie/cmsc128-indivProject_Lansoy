@@ -1,12 +1,12 @@
-<html>
-    <head>
-        <title>TO DO LIST</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="https://kit.fontawesome.com/b3ee1613e0.js" crossorigin="anonymous"></script>
-        <script src="script.js" defer></script>
-    </head>
-    <body>
-        <div class="main">
+{% extends 'base.html' %}
+
+{% block head %}
+<h1>Welcome to the Task Manager</h1>
+{% endblock %}
+
+
+{% block body %}
+<div class="main">
             <!-- <div class="header">
                 <input type="text" id="title-input" placeholder="sAdd title">
                 <input type="text" id="description-input" placeholder="Add description...">
@@ -26,7 +26,6 @@
             </div>
             <div class="calendar-container">
             </div>
-            
         </div>
         <div class="tasks-container">
            <div class="not-yet-started">
@@ -35,7 +34,6 @@
                     <div id="task-card">
                         <div id="date-time">    
                         </div>
-                
                     </div>
                 </div>
            </div>
@@ -59,5 +57,4 @@
                 <button id="sidebar-title"></button>
             </div>
         </div>
-    </body>
-</html>
+{% endblock %}
