@@ -2,6 +2,8 @@
     <head>
         <title>TO DO LIST</title>
         <link rel="stylesheet" href="style.css">
+        <script src="https://kit.fontawesome.com/b3ee1613e0.js" crossorigin="anonymous"></script>
+        <script src="script.js" defer></script>
     </head>
     <body>
         <div class="main">
@@ -19,17 +21,22 @@
                     <option value="low">Low</option>
                 </select>
                 <input type="date" id="date-input-input">
+                <input type="time" id="time-input">
                 <button id="add-task-button">Add Task</button>
             </div>
-            <div class="calendar-container" id="full-calendar-container">
-                <div class="vanilla-calendar"></div>
+            <div class="calendar-container">
             </div>
-            <ul id="task-list"></ul>
+            
         </div>
         <div class="tasks-container">
            <div class="not-yet-started">
                 <div id="header-nys">
                     <h2>Not Yet Started</h2>
+                    <div id="task-card">
+                        <div id="date-time">    
+                        </div>
+                
+                    </div>
                 </div>
            </div>
            <div class="in-progress">
@@ -41,10 +48,7 @@
                 <div id="header-c">
                     <h2>Completed</h2>
                 </div>
-           </div>  
-           <div class="calendar-container">
-                
-           </div>
+           </div> 
         </div>
         <div class="side-bar">
             <div class="profile">

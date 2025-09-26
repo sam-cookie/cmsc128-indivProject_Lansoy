@@ -15,7 +15,9 @@ h3 {
 body {
     overflow-x: hidden;
     margin: 0;
-    background-color: #EFE4D2;
+    background: linear-gradient(135deg, #1e3c72, #392770,#280a44);
+    background-attachment: fixed;
+    color: #fff;
 }
 
 .side-bar {
@@ -24,7 +26,7 @@ body {
     left: 0;
     height: 100%;
     width: 13rem;
-    background-color: #333;
+    background: #172014;
     color: white;
     padding-top: 1rem;
 }
@@ -58,7 +60,7 @@ body {
 }
 
 
-input[type="date"] {
+input[type="date"], [type="time"] {
   padding: 0.3rem;
   border: 1px solid #ffffff;
   border-radius: 0.2rem;
@@ -83,20 +85,91 @@ input[type="date"] {
     margin-top: 0;         
 }
 
-.input-section {
+
+.date-time {
+    color:white;
+    display: flex;
+    gap: 0.5rem;
+    box-shadow: 0 1px 4px rgba(36, 67, 69, 0.6);
+    background: #333;
+    padding: 0.3rem;
+    border-radius: 0.2rem; 
+    margin-left: 1rem;
+}
+
+.task-card {
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    margin-bottom: 0.8rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.4);
+}
+
+.task-card > div {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
+}
+
+.task-card .date-time {
+    font-size: 0.75rem;
+    color: #eee;
+    background: rgba(0,0,0,0.4);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.3rem;
+}
+
+.task-card i {
+    cursor: pointer;
+    margin-left: 0.8rem;
+    color: #dbe1dd;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.task-card i:hover {
+    color: #000000;
+}
+
+.input-section {
+    color: black;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
     background-color: #f3f3f3;
     border: 1px solid #ccc;
     border-radius: 0.3rem;
     padding: 0.8rem;
     margin: 2rem auto 2rem auto;
-    box-shadow: 0 1px 4px rgba(36, 67, 69, 0.6);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     width: fit-content;
     align-self: flex-start; 
 }
+
+/* .task-card.high {
+    border-left: 5px solid #23110f;
+}
+.task-card.mid {
+    border-left: 5px solid #bc7474;
+}
+.task-card.low {
+    border-left: 5px solid #d0baba;
+} */
 
 #priority-select {
     padding: 0.3rem;
@@ -114,25 +187,26 @@ input[type="date"] {
     font-size: 0.8rem;
     font-weight: 500;
     color: white;
-    background-color: #3F4F44;
+    background-color: #625082;
     cursor: pointer;
     margin-left: 1rem;
 }
 
 #add-task-button:hover {
-    background-color: #2C3930;
+    background-color: #2e085d;
 }
 
 .tasks-container {
     display: flex;
     gap: 2rem; 
-    margin-left: 15rem; 
+    margin-left: 14rem;
+    margin-right: 1rem;
 }
 
 .not-yet-started,
 .in-progress,
 .completed {
-    color: white;
+    color: rgb(255, 255, 255);
     position: static;
     flex-direction: column;
     min-height: 60vh;
@@ -143,15 +217,17 @@ input[type="date"] {
     padding: 20px;
     margin: 0 auto;             
     z-index: 1;
+    background: rgba(255, 255, 255, 0.209);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.not-yet-started {
-    background-color:#261FB3;
+/* .not-yet-started::hover {
 }
-
 .in-progress {
     background-color: #161179;
 }
 .completed {
     background-color: #0C0950;
-}
+} */
