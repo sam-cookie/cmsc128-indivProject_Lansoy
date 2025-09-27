@@ -20,7 +20,7 @@
 <div class="tasks-container">
    <div class="not-yet-started">
         <div id="header-nys">
-            <h2>Not Yet Started</h2>
+            <h2>Backlogs</h2>
             <div id="task-card">
                 {% for task in tasks %}
                 <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}">
@@ -49,8 +49,8 @@
 
 <div class="side-bar">
     <div class="profile">
-        <img src="pfp.png" alt="Profile Picture">
-        <h2>Hello, user!</h2>
+        <!-- <img src="pfp.png" alt="Profile Picture"> -->
+        <h1>Hello, user!</h1>
     </div>
     <div class="tasks">
         <button id="sidebar-title"></button>

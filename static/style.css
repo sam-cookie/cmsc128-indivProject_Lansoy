@@ -7,10 +7,10 @@ h1, h2 {
     font-weight: 700;
 }
 
-h3 {
-    font-size: 0.75rem;
-    font-weight: 500;
+h1 {
+    margin-left: 2.8rem;
 }
+
 
 body {
     overflow-x: hidden;
@@ -22,13 +22,24 @@ body {
 
 .side-bar {
     position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 13rem;
-    background: #172014;
-    color: white;
-    padding-top: 1rem;
+    top: 1rem;
+    left: 1rem;
+    height: calc(100% - 2rem);
+    width: 12rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    border-radius: 0.5rem; 
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.side-bar:hover, .not-yet-started:hover,
+.in-progress:hover,
+.completed:hover{
+    transform: translateY(-3px); 
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
 #sidebar-title {
@@ -117,41 +128,6 @@ input[type="date"], [type="time"] {
     display: none;
 }
 
-.edit-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-    gap: 10px;
-}
-
-.btn {
-    flex: 1;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.btn.save {
-    background-color: #625082;
-    color: #fff;
-}
-
-.btn.save:hover {
-    background-color: #2e085d;
-}
-
-.btn.cancel {
-    background-color: #ddd;
-    color: #333;
-}
-
-.btn.cancel:hover {
-    background-color: #bbb;
-}
-
 .task-card {
     position: relative;
     font-size: 0.8rem;
@@ -177,7 +153,7 @@ input[type="date"], [type="time"] {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.1rem;
 }
 
 .task-card .date-time {
@@ -256,7 +232,7 @@ input[type="date"], [type="time"] {
 
 .tasks-container {
     display: flex;
-    gap: 2rem; 
+    gap: 0.7rem; 
     margin-left: 14rem;
     margin-right: 1rem;
 }
