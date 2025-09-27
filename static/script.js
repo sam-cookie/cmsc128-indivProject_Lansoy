@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function sortTasks() {
-        const container = document.querySelector('.not-yet-started'); // or whichever column
+        const container = document.querySelector('.not-yet-started'); 
         const tasks = Array.from(container.querySelectorAll('.task-card'));
 
         tasks.sort((a, b) => {
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return aDate - bDate;
         });
 
-        tasks.forEach(task => container.appendChild(task)); // re-append in order
+        tasks.forEach(task => container.appendChild(task)); 
     }   
 
 
