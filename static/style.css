@@ -97,7 +97,63 @@ input[type="date"], [type="time"] {
     margin-left: 1rem;
 }
 
+.edit-overlay {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 25px;
+     z-index: 9999;
+    min-width: 300px;
+    max-width: 90%;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    display: none;
+}
+
+.edit-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn.save {
+    background-color: #625082;
+    color: #fff;
+}
+
+.btn.save:hover {
+    background-color: #2e085d;
+}
+
+.btn.cancel {
+    background-color: #ddd;
+    color: #333;
+}
+
+.btn.cancel:hover {
+    background-color: #bbb;
+}
+
 .task-card {
+    position: relative;
     font-size: 0.8rem;
     display: flex;
     justify-content: space-between;
@@ -161,16 +217,18 @@ input[type="date"], [type="time"] {
     align-self: flex-start; 
 }
 
-/* .task-card.high {
-    border-left: 5px solid #23110f;
+.task-card.high {
+    background-color: #662019ff;
+    color: #fff;
 }
 .task-card.mid {
-    border-left: 5px solid #bc7474;
+    background-color: #bc7474;
+    color: #fff;
 }
 .task-card.low {
-    border-left: 5px solid #d0baba;
-} */
-
+    background-color: #d0baba;
+    color: #333;
+}
 #priority-select {
     padding: 0.3rem;
     border: 1px solid #ffffff;

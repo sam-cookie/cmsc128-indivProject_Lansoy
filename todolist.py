@@ -1,6 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 import sqlite3
-import os
 
 app = Flask(__name__)
 
@@ -21,26 +20,62 @@ def init_db():
 
 init_db()
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    if request.method == 'POST':
-        name = request.form['name']
-        priority = request.form['priority']
-        date = request.form['date']
-        time = request.form['time']
-        conn = sqlite3.connect('tododatabase.db')
-        c = conn.cursor()
-        c.execute('INSERT INTO tasks (name, priority, date, time) VALUES (?, ?, ?, ?)',
-                  (name, priority, date, time))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
     conn = sqlite3.connect('tododatabase.db')
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
-    c.execute('SELECT * FROM tasks')
+    c.execute('''
+        SELECT * FROM tasks
+        ORDER BY 
+            CASE priority
+                WHEN 'high' THEN 1
+                WHEN 'mid'  THEN 2
+                WHEN 'low'  THEN 3
+            END,
+            date ASC,
+            time ASC
+    ''')
     tasks = c.fetchall()
     conn.close()
     return render_template('index.html', tasks=tasks)
+
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    data = request.get_json()
+    name = data['name']
+    priority = data['priority']
+    date = data['date']
+    time = data['time']
+    conn = sqlite3.connect('tododatabase.db')
+    c = conn.cursor()
+    c.execute('INSERT INTO tasks (name, priority, date, time) VALUES (?, ?, ?, ?)',
+              (name, priority, date, time))
+    conn.commit()
+    task_id = c.lastrowid
+    conn.close()
+    return jsonify({'id': task_id, 'name': name, 'priority': priority, 'date': date, 'time': time})
+
+@app.route('/edit_task/<int:task_id>', methods=['PUT'])
+def edit_task(task_id):
+    data = request.get_json()
+    name = data.get('name')
+    date = data.get('date')
+    time = data.get('time')
+    priority = data.get('priority')
+
+    conn = sqlite3.connect('tododatabase.db')
+    c = conn.cursor()
+    c.execute('''
+        UPDATE tasks
+        SET name = ?, date = ?, time = ?, priority = ?
+        WHERE id = ?
+    ''', (name, date, time, priority, task_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'success': True})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
