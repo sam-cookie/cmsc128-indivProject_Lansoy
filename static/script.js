@@ -129,8 +129,6 @@ document.addEventListener('DOMContentLoaded', function() {
         tasks.forEach(task => container.appendChild(task)); 
     }   
 
-
-
     function attachTaskEvents(taskDiv) {
         const deleteIcon = taskDiv.querySelector('.fa-trash');
         const editIcon = taskDiv.querySelector('.fa-pen');
@@ -162,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const editForm = document.createElement('form');
             editForm.className = 'edit-overlay';
 
+            // Create form header
             const formHeader = document.createElement('div');
             formHeader.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;';
             formHeader.innerHTML = '<i class="fa-solid fa-edit"></i><h3 style="margin: 0; color: var(--text-primary);">Edit Task</h3>';
@@ -476,29 +475,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // delete animation
         taskElement.style.animation = 'fadeOut 0.3s ease-out';
         
-        // Call backend API to delete from database
-        fetch(`/delete_task/${taskId}`, {
-            method: 'DELETE'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Remove from DOM after successful API call
-                setTimeout(() => {
-                    taskElement.remove();
-                    showUndoNotification(taskData);
-                }, 300);
-            } else {
-                console.error('Failed to delete task from database');
-                // Restore animation if API call failed
-                taskElement.style.animation = '';
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting task:', error);
-            // Restore animation if API call failed
-            taskElement.style.animation = '';
-        });
+        setTimeout(() => {
+            taskElement.remove();
+            showUndoNotification(taskData);
+        }, 300);
     }
 
     function showUndoNotification(taskData) {
@@ -546,40 +526,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function undoTask(taskData) {
-        // restore task in database first
-        fetch('/add_task', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: taskData.name,
-                priority: taskData.priority,
-                date: taskData.date,
-                time: taskData.time
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.id) {
-                // Update the task ID in the restored element
-                const restoredTask = taskData.element;
-                restoredTask.dataset.id = data.id;
-                taskData.parent.appendChild(restoredTask);
-                
-                // reattach event listeners when undo
-                attachTaskEvents(restoredTask);
-                addSecondsDisplay(restoredTask);
+        // restore task
+        const restoredTask = taskData.element;
+        taskData.parent.appendChild(restoredTask);
+        
+        // reattach event listeners when undo
+        attachTaskEvents(restoredTask);
+        addSecondsDisplay(restoredTask);
 
-                // add redo animation
-                restoredTask.style.animation = 'slideInFromTop 0.5s ease-out';
-            } else {
-                console.error('Failed to restore task in database');
-            }
-        })
-        .catch(error => {
-            console.error('Error restoring task:', error);
-        });
+        // add redo animation
+        restoredTask.style.animation = 'slideInFromTop 0.5s ease-out';
         
         // show message for success undo
         const successToast = document.createElement('div');
@@ -593,6 +549,7 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => successToast.remove(), 300);
         }, 2000);
     }
+
 
     setupDropZones();
 });

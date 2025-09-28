@@ -51,7 +51,6 @@
                     </div>
                 </div>
                 <div class="task-actions">
-                    <i class="fa-solid fa-check" title="Mark as done"></i>
                     <i class="fa-solid fa-pen" title="Edit task"></i>
                     <i class="fa-solid fa-trash" title="Delete task"></i>
                 </div>
@@ -69,7 +68,6 @@
             {% if in_progress_tasks %}
                 {% for task in in_progress_tasks %}
                 <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
-                 <div class="task-card {{ task['priority'] }} completed" data-id="{{ task['id'] }}" draggable="true">
 
                     <div class="task-header">
                         <div class="task-name">{{ task['name'] }}</div>
