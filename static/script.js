@@ -70,9 +70,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 addTaskBtn.innerHTML = '<i class="fa-solid fa-check"></i> Added!';
                 addTaskBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
                 
+                // Create and add the new task element dynamically
+                const taskElement = createTaskElement(task);
+                const backlogContainer = document.querySelector('#task-card');
+                backlogContainer.appendChild(taskElement);
+                
+                // Add animation to the new task
+                taskElement.classList.add('new-task');
+                
+                // Clear form
+                taskInput.value = '';
+                timeInput.value = '';
+                
+                // Reset button after delay
                 setTimeout(() => {
-                    window.location.reload(); 
-                }, 500);
+                    addTaskBtn.classList.remove('loading');
+                    addTaskBtn.innerHTML = '<i class="fa-solid fa-plus"></i> Add Task';
+                    addTaskBtn.style.background = '';
+                }, 2000);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -128,6 +143,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tasks.forEach(task => container.appendChild(task)); 
     }   
+
+    function createTaskElement(task) {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = `task-card ${task.priority}`;
+        taskDiv.setAttribute('data-id', task.id);
+        taskDiv.setAttribute('draggable', 'true');
+        
+        taskDiv.innerHTML = `
+            <div class="task-header">
+                <div class="task-name">${task.name}</div>
+                <div class="task-priority-badge ${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</div>
+            </div>
+            <div class="task-content">
+                <div class="task-date">${task.date}</div>
+                <div class="task-time">
+                    <i class="fa-solid fa-clock"></i>
+                    ${task.time}
+                </div>
+            </div>
+            <div class="task-actions">
+                <i class="fa-solid fa-pen" title="Edit task"></i>
+                <i class="fa-solid fa-trash" title="Delete task"></i>
+            </div>
+        `;
+        
+        // Attach event listeners
+        attachTaskEvents(taskDiv);
+        addSecondsDisplay(taskDiv);
+        
+        return taskDiv;
+    }
 
     function attachTaskEvents(taskDiv) {
         const deleteIcon = taskDiv.querySelector('.fa-trash');
@@ -352,7 +398,6 @@ document.addEventListener('DOMContentLoaded', function() {
             taskElement.classList.remove('dragging');
             taskElement.style.display = '';
             
-            // Remove all drag-over classes 
             document.querySelectorAll('.drop-zone').forEach(zone => {
                 zone.classList.remove('drag-over');
             });
@@ -475,10 +520,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // delete animation
         taskElement.style.animation = 'fadeOut 0.3s ease-out';
         
-        setTimeout(() => {
-            taskElement.remove();
-            showUndoNotification(taskData);
-        }, 300);
+        // Delete from database
+        fetch(`/delete_task/${taskId}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // Remove from DOM after successful database deletion
+                setTimeout(() => {
+                    taskElement.remove();
+                    showUndoNotification(taskData);
+                }, 300);
+            } else {
+                console.error('Failed to delete task from database');
+                // Restore animation if deletion failed
+                taskElement.style.animation = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting task:', error);
+            // Restore animation if deletion failed
+            taskElement.style.animation = '';
+        });
     }
 
     function showUndoNotification(taskData) {
@@ -526,16 +590,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function undoTask(taskData) {
-        // restore task
-        const restoredTask = taskData.element;
-        taskData.parent.appendChild(restoredTask);
-        
-        // reattach event listeners when undo
-        attachTaskEvents(restoredTask);
-        addSecondsDisplay(restoredTask);
+        // Restore task in database first
+        fetch('/add_task', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: taskData.name,
+                priority: taskData.priority,
+                date: taskData.date,
+                time: taskData.time
+            })
+        })
+        .then(res => res.json())
+        .then(newTask => {
+    
+            const restoredTask = taskData.element;
+            restoredTask.setAttribute('data-id', newTask.id);
+            taskData.parent.appendChild(restoredTask);
+            
+            // reattach event listeners when undo
+            attachTaskEvents(restoredTask);
+            addSecondsDisplay(restoredTask);
 
-        // add redo animation
-        restoredTask.style.animation = 'slideInFromTop 0.5s ease-out';
+            // add redo animation
+            restoredTask.style.animation = 'slideInFromTop 0.5s ease-out';
+        })
+        .catch(error => {
+            console.error('Error restoring task:', error);
+        });
         
         // show message for success undo
         const successToast = document.createElement('div');
@@ -549,7 +631,6 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => successToast.remove(), 300);
         }, 2000);
     }
-
 
     setupDropZones();
 });

@@ -246,7 +246,7 @@ body {
 #task-card {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .task-card {
@@ -390,12 +390,6 @@ body {
 
 .task-actions .fa-pen:hover {
     color: #7B7B7B;
-}
-
-.task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
 }
 
 .task-list.empty {
