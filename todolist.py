@@ -12,9 +12,17 @@ def init_db():
             name TEXT NOT NULL,
             priority TEXT,
             date TEXT,
-            time TEXT
+            time TEXT,
+            status TEXT DEFAULT 'backlog'
         )
     ''')
+    
+    try:
+        c.execute('ALTER TABLE tasks ADD COLUMN status TEXT DEFAULT "backlog"')
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+    
     conn.commit()
     conn.close()
 
@@ -27,6 +35,7 @@ def index():
     c = conn.cursor()
     c.execute('''
         SELECT * FROM tasks
+        WHERE status = 'backlog' OR status IS NULL
         ORDER BY 
             CASE priority
                 WHEN 'high' THEN 1
@@ -36,9 +45,41 @@ def index():
             date ASC,
             time ASC
     ''')
-    tasks = c.fetchall()
+    backlog_tasks = c.fetchall()
+    
+    c.execute('''
+        SELECT * FROM tasks
+        WHERE status = 'in-progress'
+        ORDER BY 
+            CASE priority
+                WHEN 'high' THEN 1
+                WHEN 'mid'  THEN 2
+                WHEN 'low'  THEN 3
+            END,
+            date ASC,
+            time ASC
+    ''')
+    in_progress_tasks = c.fetchall()
+    
+    c.execute('''
+        SELECT * FROM tasks
+        WHERE status = 'completed'
+        ORDER BY 
+            CASE priority
+                WHEN 'high' THEN 1
+                WHEN 'mid'  THEN 2
+                WHEN 'low'  THEN 3
+            END,
+            date ASC,
+            time ASC
+    ''')
+    completed_tasks = c.fetchall()
+    
     conn.close()
-    return render_template('index.html', tasks=tasks)
+    return render_template('index.html', 
+                         tasks=backlog_tasks, 
+                         in_progress_tasks=in_progress_tasks,
+                         completed_tasks=completed_tasks)
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
@@ -74,6 +115,32 @@ def edit_task(task_id):
     conn.commit()
     conn.close()
 
+    return jsonify({'success': True})
+
+@app.route('/delete_task/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    conn = sqlite3.connect('tododatabase.db')
+    c = conn.cursor()
+    c.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'success': True})
+
+@app.route('/update_task_status/<int:task_id>', methods=['PUT'])
+def update_task_status(task_id):
+    data = request.get_json()
+    status = data.get('status')
+    
+    if status not in ['backlog', 'in-progress', 'completed']:
+        return jsonify({'success': False, 'error': 'Invalid status'})
+    
+    conn = sqlite3.connect('tododatabase.db')
+    c = conn.cursor()
+    c.execute('UPDATE tasks SET status = ? WHERE id = ?', (status, task_id))
+    conn.commit()
+    conn.close()
+    
     return jsonify({'success': True})
 
 
