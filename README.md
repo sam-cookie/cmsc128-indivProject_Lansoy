@@ -1,6 +1,6 @@
 To-do-list App
 
-By Samantha Lodenn D. Lansoy and Eleah Joy Melchor
+By Samantha Lodenn D. Lansoy 
 
 This project is a simple To-do-list web application that allows users to create, update, and manage tasks.
 
@@ -91,3 +91,5 @@ Request Body (JSON):
 Response:
 
 { "success": true }
+
+First part of the lab was in collabaration with Eleah Joy Melchor
