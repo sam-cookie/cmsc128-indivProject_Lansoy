@@ -51,10 +51,11 @@ body {
 /* shared container styling */
 .login-container,
 .register-container,
-.forgot-password-container {
+.forgot-password-container,
+.edit-profile-container {
     width: 100%;
     max-width: 380px;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.378);
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
@@ -75,7 +76,8 @@ body {
 /* labels */
 .login-container label,
 .register-container label,
-.forgot-password-container label {
+.forgot-password-container label,
+.edit-profile-container label {
     display: block;
     text-align: left;
     margin-bottom: 0.5rem;
@@ -86,7 +88,8 @@ body {
 /* inputs */
 .login-container input,
 .register-container input,
-.forgot-password-container input {
+.forgot-password-container input,
+.edit-profile-container input {
     width: 100%;
     padding: 0.75rem;
     border-radius: 6px;
@@ -107,7 +110,7 @@ body {
 }
 
 /* buttons */
-.login-button {
+.login-button, .cancel-button {
     width: 100%;
     padding: 0.75rem;
     border: none;
@@ -120,15 +123,26 @@ body {
     transition: all 0.3s ease;
 }
 
+.cancel-button {
+    margin-top: 0.5rem;
+    background: linear-gradient(90deg, #4b1616, #370909);
+}
+
 .login-button:hover {
     background: linear-gradient(90deg, #b564d8, #7a3b91);
+    transform: translateY(-2px);
+}
+
+.cancel-button:hover {
+    background: linear-gradient(90deg, #6a1f1f, #4b1616);
     transform: translateY(-2px);
 }
 
 /* links and paragraphs */
 .login-container p,
 .register-container p,
-.forgot-password-container p {
+.forgot-password-container p
+ {
     margin-top: 2rem;
     font-size: 0.9rem;
 }

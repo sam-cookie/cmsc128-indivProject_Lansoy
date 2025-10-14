@@ -97,6 +97,41 @@ def forgot_password():
 
     return render_template("forgotpassword.html")
 
+@app.route("/editprofile/<username>", methods=["GET", "POST"])
+def edit_profile(username):
+    with sqlite3.connect(DB_NAME) as conn:
+        cursor = conn.cursor()
+        
+        # fetch current user data
+        cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
+        user = cursor.fetchone()
+        
+        if not user:
+            flash("User not found.", "error")
+            return redirect(url_for("login"))
+
+    if request.method == "POST":
+        new_username = request.form["username"]
+        new_email = request.form["email"]
+        new_password = request.form["password"]
+        hashed_password = generate_password_hash(new_password)
+
+        try:
+            with sqlite3.connect(DB_NAME) as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    UPDATE accounts
+                    SET username = ?, email = ?, password = ?
+                    WHERE username = ?
+                """, (new_username, new_email, hashed_password, username))
+                conn.commit()
+            flash("Profile updated successfully!", "success")
+            return redirect(url_for("profile", username=new_username))
+        except sqlite3.IntegrityError:
+            flash("Username or email already exists.", "error")
+            return redirect(url_for("edit_profile", username=username))
+
+    return render_template("editprofile.html", user={"username": user[2], "email": user[1]})
 
 @app.route("/profile/<username>")
 def profile(username):
@@ -105,7 +140,12 @@ def profile(username):
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
         user = cursor.fetchone()
     if user:
-        return f"<h2>Welcome, {user[0]}!</h2><p>Username: {user[2]}<br>Email: {user[1]}</p>"
+        return f"""
+            <h2>Welcome, {user[0]}!</h2>
+            <p>Username: {user[2]}<br>Email: {user[1]}</p>
+            <a href='/editprofile/{user[2]}'>Edit Profile</a>
+            <a href="{{ url_for('login') }}">Logout</a>
+        """
     else:
         return "User not found."
 

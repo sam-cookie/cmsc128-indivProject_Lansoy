@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block body %}
+<div class="enter-code-container">
+    <h2>Enter code sent to your email</h2>
+    <form method="POST" action="/resetpassword">
+        <label for="code">Enter your email address:</label>
+        <input type="code" id="code" name="code" required><br>
+        <button class="login-button" type="submit">Submit</button>
+    </form>
+    <p>Remembered your password? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+{% endblock %}
