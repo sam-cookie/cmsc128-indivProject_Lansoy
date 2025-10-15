@@ -5,6 +5,13 @@
 {% block body %}
 <div class="register-container">
     <h2>Register</h2>
+    {% if error %}
+    <p style="color: #ff6b6b; margin-bottom: 1rem;">{{ error }}</p>
+    {% endif %}
+
+    {% if message %}
+    <p style="color: #90ee90; margin-bottom: 1rem;">{{ message }}</p>
+    {% endif %}
     <form method="POST" action="/register">
         <label for="fullName">Full Name:</label>
         <input type="text" id="fullName" name="fullName" required><br>
@@ -17,6 +24,9 @@
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
+
+        <label for="securityQuestion">For recovery purposes, what's your go to karaoke song?</label>
+        <input type="password" id="securityQuestion" name="securityQuestion" required><br>
 
         <button class="login-button" type="submit">Register</button>
     </form>

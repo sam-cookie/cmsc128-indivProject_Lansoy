@@ -5,7 +5,20 @@
 {% block body %}
 <div class="edit-profile-container">
     <h2>Edit Profile</h2>
+
+    {% if error %}
+    <p style="color: #ff6b6b; margin-bottom: 1rem;">{{ error }}</p>
+    {% endif %}
+
+    {% if message %}
+    <p style="color: #90ee90; margin-bottom: 1rem;">{{ message }}</p>
+    {% endif %}
+
     <form method="POST">
+
+        <label for="fullName">Full Name: </label>
+        <input type="text" id="fullName" name="fullName" value="{{ user.full_name }}"><br>
+
         <label for="username">New Username:</label>
         <input type="text" id="username" name="username" value="{{ user.username }}"><br>
 
@@ -16,8 +29,8 @@
         <input type="password" id="password" name="password" ><br>
 
         <button class="login-button" type="submit">Update Profile</button>
-        <button class="cancel-button" type="submit">Cancel</button> 
-        <!-- need to edit pa the logic cos this shi submits too lmao ! -->
+        <a href="{{ url_for('profile', username=user.username) }}" class="cancel-button">Cancel</a>
+    
     </form>
 </div>
 {% endblock %}

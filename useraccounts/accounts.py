@@ -1,16 +1,18 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  
+app.secret_key = "supersecretkey"
 
 DB_NAME = "accounts.db"
+
 
 @app.route("/")
 def home():
     return redirect("/login")
+
 
 def init_db():
     if not os.path.exists(DB_NAME):
@@ -21,7 +23,8 @@ def init_db():
                     full_name TEXT NOT NULL,
                     email TEXT UNIQUE NOT NULL,
                     username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL
+                    password TEXT NOT NULL,
+                    security_question TEXT NOT NULL
                 )
             """)
         print("Database created successfully.")
@@ -31,6 +34,9 @@ def init_db():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    message = session.pop("message", None)  # get and clear any stored message
+    error = None
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
@@ -41,76 +47,111 @@ def login():
             row = cursor.fetchone()
 
         if row and check_password_hash(row[0], password):
-            flash("Login successful!", "success")
             return redirect(url_for("profile", username=username))
         else:
-            flash("Invalid username or password.", "error")
-            return redirect(url_for("login"))
+            error = "Invalid username or password."
 
-    return render_template("accounts.html")
+    return render_template("accounts.html", error=error, message=message)
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    message = None
+    error = None
+
     if request.method == "POST":
         full_name = request.form["fullName"]
         email = request.form["email"]
         username = request.form["username"]
         password = request.form["password"]
+        security_question = request.form["securityQuestion"]
 
+        hashed_security_question = generate_password_hash(security_question)
         hashed_password = generate_password_hash(password)
 
         try:
             with sqlite3.connect(DB_NAME) as conn:
                 cursor = conn.cursor()
                 cursor.execute("""
-                    INSERT INTO accounts (full_name, email, username, password)
-                    VALUES (?, ?, ?, ?)
-                """, (full_name, email, username, hashed_password))
+                    INSERT INTO accounts (full_name, email, username, password, security_question)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (full_name, email, username, hashed_password, hashed_security_question))
                 conn.commit()
-            flash("Registration successful! You can now log in.", "success")
+            session["message"] = "Account created successfully! You can now log in."
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
-            flash("Username or email already exists.", "error")
-            return redirect(url_for("register"))
+            error = "Username or email already exists."
 
-    return render_template("register.html")
+    return render_template("register.html", message=message, error=error)
+
+
+@app.route("/editpassword/<username>", methods=["GET", "POST"])
+def edit_password(username):
+    message = None
+
+    if request.method == "POST":
+        new_password = request.form["password"]
+        hashed_password = generate_password_hash(new_password)
+
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                UPDATE accounts
+                SET password = ?
+                WHERE username = ?
+            """, (hashed_password, username))
+            conn.commit()
+
+        session["message"] = "Password updated successfully! You may login now."
+        return redirect(url_for("login"))
+
+    return render_template("editpassword.html", username=username, message=message)
 
 
 @app.route("/forgotpassword", methods=["GET", "POST"])
 def forgot_password():
+    error = None
+
     if request.method == "POST":
-        email = request.form["email"]
+        username = request.form["username"]
+        answer = request.form["securityQuestion"]
 
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM accounts WHERE email = ?", (email,))
+            cursor.execute("SELECT security_question FROM accounts WHERE username = ?", (username,))
             row = cursor.fetchone()
 
-        if row:
-            flash("If this email exists, a reset link will be sent soon.", "info")
+        if not row:
+            error = "User not found."
+            return render_template("forgotpassword.html", error=error)
+
+        correct_answer = row[0]
+
+        if check_password_hash(correct_answer, answer):
+            session["message"] = "Security answer correct. Please set your new password."
+            return redirect(url_for("edit_password", username=username))
         else:
-            flash("If this email exists, a reset link will be sent soon.", "info")
+            error = "Wrong answer. Please try again."
 
-        #placeholder for senfing mail
-        return redirect(url_for("login"))
+    return render_template("forgotpassword.html", error=error)
 
-    return render_template("forgotpassword.html")
 
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
 def edit_profile(username):
+    message = None
+    error = None
+
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
-        
-        # fetch current user data
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
         user = cursor.fetchone()
-        
+
         if not user:
-            flash("User not found.", "error")
+            session["message"] = "User not found."
             return redirect(url_for("login"))
 
     if request.method == "POST":
+        new_name = request.form["fullName"]
         new_username = request.form["username"]
         new_email = request.form["email"]
         new_password = request.form["password"]
@@ -121,17 +162,17 @@ def edit_profile(username):
                 cursor = conn.cursor()
                 cursor.execute("""
                     UPDATE accounts
-                    SET username = ?, email = ?, password = ?
+                    SET full_name = ?, username = ?, email = ?, password = ?
                     WHERE username = ?
-                """, (new_username, new_email, hashed_password, username))
+                """, (new_name, new_username, new_email, hashed_password, username))
                 conn.commit()
-            flash("Profile updated successfully!", "success")
+            session["message"] = "Profile updated successfully!"
             return redirect(url_for("profile", username=new_username))
         except sqlite3.IntegrityError:
-            flash("Username or email already exists.", "error")
-            return redirect(url_for("edit_profile", username=username))
+            error = "Username or email already exists."
 
-    return render_template("editprofile.html", user={"username": user[2], "email": user[1]})
+    return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
+
 
 @app.route("/profile/<username>")
 def profile(username):
@@ -139,15 +180,13 @@ def profile(username):
         cursor = conn.cursor()
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
         user = cursor.fetchone()
+
     if user:
-        return f"""
-            <h2>Welcome, {user[0]}!</h2>
-            <p>Username: {user[2]}<br>Email: {user[1]}</p>
-            <a href='/editprofile/{user[2]}'>Edit Profile</a>
-            <a href="{{ url_for('login') }}">Logout</a>
-        """
+        user_data = {"full_name": user[0], "email": user[1], "username": user[2]}
+        return render_template("profile.html", user=user_data)
     else:
-        return "User not found."
+        session["message"] = "User not found."
+        return redirect(url_for("login"))
 
 
 if __name__ == "__main__":

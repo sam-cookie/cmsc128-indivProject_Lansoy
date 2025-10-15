@@ -1,0 +1,6 @@
+{% block body %}
+<h2>Welcome, {{ user.full_name }}!</h2>
+<p>Username: {{ user.username }}<br>Email: {{ user.email }}</p>
+<a href="{{ url_for('edit_profile', username=user.username) }}">Edit Profile</a>
+<a href="{{ url_for('login') }}">Logout</a>
+{% endblock %}
