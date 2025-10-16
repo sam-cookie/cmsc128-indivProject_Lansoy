@@ -8,11 +8,9 @@ app.secret_key = "supersecretkey"
 
 DB_NAME = "accounts.db"
 
-
 @app.route("/")
 def home():
     return redirect("/login")
-
 
 def init_db():
     if not os.path.exists(DB_NAME):
@@ -31,10 +29,9 @@ def init_db():
     else:
         print("Database already exists.")
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    message = session.pop("message", None)  # get and clear any stored message
+    message = session.pop("message", None)
     error = None
 
     if request.method == "POST":
@@ -47,12 +44,18 @@ def login():
             row = cursor.fetchone()
 
         if row and check_password_hash(row[0], password):
+            session["username"] = username  # <-- store logged-in user
             return redirect(url_for("profile", username=username))
         else:
             error = "Invalid username or password."
 
     return render_template("accounts.html", error=error, message=message)
 
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    session["message"] = "Logged out successfully."
+    return redirect(url_for("login"))
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -66,8 +69,13 @@ def register():
         password = request.form["password"]
         security_question = request.form["securityQuestion"]
 
+        # check if password is at least 8 characters
         if len(password) <  8: 
             error = "Password must be at least 8 characters long."
+            return render_template("register.html", message=message, error=error)
+
+        if "@" not in email:
+            error = "Please enter a valid email address."
             return render_template("register.html", message=message, error=error)
 
         hashed_security_question = generate_password_hash(security_question)
@@ -88,19 +96,22 @@ def register():
 
     return render_template("register.html", message=message, error=error)
 
-
 @app.route("/editpassword/<username>", methods=["GET", "POST"])
 def edit_password(username):
+    if "username" not in session or session["username"] != username:
+        session["message"] = "Please log in to change your password."
+        return redirect(url_for("login"))
+
     message = None
+    error = None
 
     if request.method == "POST":
         new_password = request.form["password"]
-        hashed_password = generate_password_hash(new_password)
-
         if len(new_password) <  8: 
             error = "Password must be at least 8 characters long."
             return render_template("editpassword.html", message=message, error=error)
 
+        hashed_password = generate_password_hash(new_password)
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -114,7 +125,6 @@ def edit_password(username):
         return redirect(url_for("login"))
 
     return render_template("editpassword.html", username=username, message=message)
-
 
 @app.route("/forgotpassword", methods=["GET", "POST"])
 def forgot_password():
@@ -143,9 +153,12 @@ def forgot_password():
 
     return render_template("forgotpassword.html", error=error)
 
-
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
 def edit_profile(username):
+    if "username" not in session or session["username"] != username:
+        session["message"] = "Please log in to edit your profile."
+        return redirect(url_for("login"))
+
     message = None
     error = None
 
@@ -163,12 +176,11 @@ def edit_profile(username):
         new_username = request.form["username"]
         new_email = request.form["email"]
         new_password = request.form["password"]
-        hashed_password = generate_password_hash(new_password)
-
-        if len(new_password) <  8: 
+        if len(new_password) < 8:
             error = "Password must be at least 8 characters long."
             return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
+        hashed_password = generate_password_hash(new_password)
         try:
             with sqlite3.connect(DB_NAME) as conn:
                 cursor = conn.cursor()
@@ -178,6 +190,7 @@ def edit_profile(username):
                     WHERE username = ?
                 """, (new_name, new_username, new_email, hashed_password, username))
                 conn.commit()
+            session["username"] = new_username  # update session if username changed
             session["message"] = "Profile updated successfully!"
             return redirect(url_for("profile", username=new_username))
         except sqlite3.IntegrityError:
@@ -185,9 +198,12 @@ def edit_profile(username):
 
     return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
-
 @app.route("/profile/<username>")
 def profile(username):
+    if "username" not in session or session["username"] != username:
+        session["message"] = "Please log in to view your profile."
+        return redirect(url_for("login"))
+
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
@@ -199,7 +215,6 @@ def profile(username):
     else:
         session["message"] = "User not found."
         return redirect(url_for("login"))
-
 
 if __name__ == "__main__":
     init_db()
