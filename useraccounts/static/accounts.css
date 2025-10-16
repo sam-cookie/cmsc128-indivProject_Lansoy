@@ -115,7 +115,8 @@ body {
 }
 
 /* buttons */
-.login-button {
+.login-button, .edit-button {
+    text-decoration:none;
     width: 100%;
     padding: 0.75rem;
     border: none;
@@ -127,6 +128,14 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
 }
+
+.edit-button {
+    display: inline-block; 
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+
+
 
 .cancel-button {
     text-decoration: none;
