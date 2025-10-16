@@ -66,6 +66,10 @@ def register():
         password = request.form["password"]
         security_question = request.form["securityQuestion"]
 
+        if len(password) <  8: 
+            error = "Password must be at least 8 characters long."
+            return render_template("register.html", message=message, error=error)
+
         hashed_security_question = generate_password_hash(security_question)
         hashed_password = generate_password_hash(password)
 
@@ -92,6 +96,10 @@ def edit_password(username):
     if request.method == "POST":
         new_password = request.form["password"]
         hashed_password = generate_password_hash(new_password)
+
+        if len(new_password) <  8: 
+            error = "Password must be at least 8 characters long."
+            return render_template("editpassword.html", message=message, error=error)
 
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
@@ -156,6 +164,10 @@ def edit_profile(username):
         new_email = request.form["email"]
         new_password = request.form["password"]
         hashed_password = generate_password_hash(new_password)
+
+        if len(new_password) <  8: 
+            error = "Password must be at least 8 characters long."
+            return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
         try:
             with sqlite3.connect(DB_NAME) as conn:

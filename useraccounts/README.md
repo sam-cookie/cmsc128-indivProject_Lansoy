@@ -1,4 +1,3 @@
-
 This project is a user account management that is yet to be incorporated with the todolist built with flask and sqlite.
 It supports registration, login, password reset using a security question, and profile editing — all without javascript.
 
