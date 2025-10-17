@@ -98,9 +98,9 @@ def register():
 
 @app.route("/editpassword/<username>", methods=["GET", "POST"])
 def edit_password(username):
-    if "username" not in session or session["username"] != username:
-        session["message"] = "Please log in to change your password."
-        return redirect(url_for("login"))
+    # if "username" not in session or session["username"] != username:
+    #     session["message"] = "Please log in to change your password."
+    #     return redirect(url_for("edit_password", username=username))
 
     message = None
     error = None
@@ -155,9 +155,9 @@ def forgot_password():
 
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
 def edit_profile(username):
-    if "username" not in session or session["username"] != username:
-        session["message"] = "Please log in to edit your profile."
-        return redirect(url_for("login"))
+    # if "username" not in session or session["username"] != username:
+    #     session["message"] = "Please log in to edit your profile."
+    #     return redirect(url_for("login"))
 
     message = None
     error = None
@@ -200,9 +200,9 @@ def edit_profile(username):
 
 @app.route("/profile/<username>")
 def profile(username):
-    if "username" not in session or session["username"] != username:
-        session["message"] = "Please log in to view your profile."
-        return redirect(url_for("login"))
+    # if "username" not in session or session["username"] != username:
+    #     session["message"] = "Please log in to view your profile."
+    #     return redirect(url_for("login"))
 
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
