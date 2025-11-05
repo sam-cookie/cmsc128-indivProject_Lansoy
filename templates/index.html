@@ -17,11 +17,15 @@
         <div class="task-inputs">
             <div class="task-bar">
                 <input type="text" id="task-input" placeholder="Enter a new task...">
-                <select id="priority-select" name="priority">
-                    <option value="high">High Priority</option>
-                    <option value="mid">Mid Priority</option>
-                    <option value="low">Low Priority</option>
-                    <input type="date" id="date-input" name="date">
+                <div class="priority-div"> 
+                    <select id="priority-select" name="priority">
+                        <option value="high" style="background:#D85A5C;">High Priority</option>
+                        <option value="mid" style="background: #DE7428;">Mid Priority</option>
+                        <option value="low" style="background: #55813F">Low Priority</option>
+                    </select>
+                    <!-- <i class="fa-solid fa-caret-down"></i> -->
+                </div> 
+                <input type="date" id="date-input" name="date">
                 <input type="time" id="time-input">
             </div>
             <button id="add-task-button">

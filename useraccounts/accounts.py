@@ -98,9 +98,6 @@ def register():
 
 @app.route("/editpassword/<username>", methods=["GET", "POST"])
 def edit_password(username):
-    # if "username" not in session or session["username"] != username:
-    #     session["message"] = "Please log in to change your password."
-    #     return redirect(url_for("edit_password", username=username))
 
     message = None
     error = None
@@ -155,10 +152,6 @@ def forgot_password():
 
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
 def edit_profile(username):
-    # if "username" not in session or session["username"] != username:
-    #     session["message"] = "Please log in to edit your profile."
-    #     return redirect(url_for("login"))
-
     message = None
     error = None
 
@@ -198,11 +191,13 @@ def edit_profile(username):
 
     return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
-@app.route("/profile/<username>")
-def profile(username):
-    # if "username" not in session or session["username"] != username:
-    #     session["message"] = "Please log in to view your profile."
-    #     return redirect(url_for("login"))
+@app.route("/profile")
+def profile():
+    if "username" not in session:
+        session["message"] = "please log in to view your profile."
+        return redirect(url_for("login"))
+
+    username = session["username"]
 
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
@@ -213,8 +208,9 @@ def profile(username):
         user_data = {"full_name": user[0], "email": user[1], "username": user[2]}
         return render_template("profile.html", user=user_data)
     else:
-        session["message"] = "User not found."
+        session["message"] = "user not found."
         return redirect(url_for("login"))
+
 
 if __name__ == "__main__":
     init_db()

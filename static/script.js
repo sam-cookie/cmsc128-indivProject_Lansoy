@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function showTaskMovedFeedback(taskElement, status) {
         // animation to show the task was moved
         taskElement.style.transform = 'scale(1.05)';
-        taskElement.style.boxShadow = '0 8px 25px rgba(98, 35, 117, 0.3)';
+        taskElement.style.boxShadow = '0 8px 25px #043915';
         
         setTimeout(() => {
             taskElement.style.transform = '';
