@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>Menu</h3>
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('profile') }}" class="nav-item">
+            <i class="fa-solid fa-list"></i>
+            <span class="nav-text">My lists</span>
+        </a>
+        <a href="{{ url_for('create_collaboration') }}" class="nav-item">
+            <i class="fa-solid fa-plus"></i>
+            <span class="nav-text">Create new collaboration</span>
+        </a>
+        <a href="{{ url_for('collaboration') }}" class="nav-item">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="nav-text">My Collaborations</span>
+        </a>
+        <a href="{{ url_for('edit_profile', username=username) }}" class="nav-item">
+            <i class="fa-solid fa-user-pen"></i>
+            <span class="nav-text">Edit Profile</span>
+        </a>
+        <a href="/settings" class="nav-item">
+            <i class="fa-solid fa-circle-info"></i>
+            <span class="nav-text">About</span>
+        </a>
+        <a href="{{ url_for ('login') }}" class="nav-item">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span class="nav-text">Logout</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <div class="container">
+        <header class="header">
+            <div class="greeting">
+                <h1>{{ list_name }}</h1><br
+                <h2><span class="user-name">Collaboration with: {{ members|join(', ') }}!</span></h2>
+                <p>Shared tasks with your team members</p>
+                <div class="collab-info">
+                    <small>Owner: {{ owner }} | Members: {{ members|length }}</small>
+                </div>
+            </div>
+            <div class="task-inputs">
+                <div class="task-bar">
+                    <input type="text" id="task-input" placeholder="Enter a new task...">
+                    <div class="priority-div"> 
+                        <select id="priority-select" name="priority">
+                            <option value="high" style="background:#D85A5C;">High Priority</option>
+                            <option value="mid" style="background: #DE7428;">Mid Priority</option>
+                            <option value="low" style="background: #55813F">Low Priority</option>
+                        </select>
+                    </div> 
+                    <input type="date" id="date-input" name="date">
+                    <input type="time" id="time-input">
+                </div>
+                <button id="add-task-button">
+                    <i class="fa-solid fa-plus"></i>
+                    Add Task
+                </button>
+            </div>
+        </header>
+
+        <div class="tasks-container">
+            <section class="column" data-status="backlog">
+                <h2>BACKLOG↓</h2>
+                <div class="drop-zone" data-status="backlog">
+                    {% for task in tasks if task.status == 'backlog' %}
+                    <div class="task-card {{ task.priority }}" data-id="{{ task.id }}" data-collab="true" draggable="true">
+                        <div class="task-header">
+                            <div class="task-name">{{ task.name }}</div>
+                            <div class="task-priority-badge {{ task.priority }}">{{ task.priority|title }}</div>
+                        </div>
+                        <div class="task-content">
+                            <div class="task-date">{{ task.date }}</div>
+                            <div class="task-time">
+                                <i class="fa-solid fa-clock"></i>
+                                {{ task.time }}
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <small>Created by: {{ task.created_by }}</small>
+                        </div>
+                        <div class="task-actions">
+                            <i class="fa-solid fa-pen edit-task" data-task-id="{{ task.id }}"></i>
+                            <i class="fa-solid fa-trash delete-task" data-task-id="{{ task.id }}"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if not tasks or not tasks|selectattr('status', 'equalto', 'backlog')|list %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-inbox"></i>
+                            <p>No tasks in backlog</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="column" data-status="in-progress">
+                <h2>IN PROGRESS→</h2>
+                <div class="drop-zone" data-status="in-progress">
+                    {% for task in tasks if task.status == 'in-progress' %}
+                    <div class="task-card {{ task.priority }}" data-id="{{ task.id }}" data-collab="true" draggable="true">
+                        <div class="task-header">
+                            <div class="task-name">{{ task.name }}</div>
+                            <div class="task-priority-badge {{ task.priority }}">{{ task.priority|title }}</div>
+                        </div>
+                        <div class="task-content">
+                            <div class="task-date">{{ task.date }}</div>
+                            <div class="task-time">
+                                <i class="fa-solid fa-clock"></i>
+                                {{ task.time }}
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <small>Created by: {{ task.created_by }}</small>
+                        </div>
+                        <div class="task-actions">
+                            <i class="fa-solid fa-pen edit-task" data-task-id="{{ task.id }}"></i>
+                            <i class="fa-solid fa-trash delete-task" data-task-id="{{ task.id }}"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if not tasks or not tasks|selectattr('status', 'equalto', 'in-progress')|list %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-hourglass-half"></i>
+                            <p>No tasks in progress</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="column" data-status="completed">
+                <h2>COMPLETED↑</h2>
+                <div class="drop-zone" data-status="completed">
+                    {% for task in tasks if task.status == 'completed' %}
+                    <div class="task-card {{ task.priority }}" data-id="{{ task.id }}" data-collab="true" draggable="true">
+                        <div class="task-header">
+                            <div class="task-name">{{ task.name }}</div>
+                            <div class="task-priority-badge {{ task.priority }}">{{ task.priority|title }}</div>
+                        </div>
+                        <div class="task-content">
+                            <div class="task-date">{{ task.date }}</div>
+                            <div class="task-time">
+                                <i class="fa-solid fa-clock"></i>
+                                {{ task.time }}
+                            </div>
+                        </div>
+                        <div class="task-meta">
+                            <small>Created by: {{ task.created_by }}</small>
+                        </div>
+                        <div class="task-actions">
+                            <i class="fa-solid fa-pen edit-task" data-task-id="{{ task.id }}"></i>
+                            <i class="fa-solid fa-trash delete-task" data-task-id="{{ task.id }}"></i>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% if not tasks or not tasks|selectattr('status', 'equalto', 'completed')|list %}
+                        <div class="empty-state">
+                            <i class="fa-solid fa-trophy"></i>
+                            <p>No completed tasks</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden field to store list_id -->
+<input type="hidden" id="collab-list-id" value="{{ list_id }}">
+
+<script>
+    const LIST_ID = document.getElementById('collab-list-id').value;
+</script>
+{% endblock %}

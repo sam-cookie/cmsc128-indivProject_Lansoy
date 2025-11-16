@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+        <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Expires" content="0">
+        <title>{% block title %}GET IT DONE{% endblock %}</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='accounts.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='collab.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
+        <script src="https://kit.fontawesome.com/b3ee1613e0.js" crossorigin="anonymous"></script>
+        <script type="module" src="{{ url_for('static', filename='main.js') }}"></script>
+        <!-- <script src="{{url_for('static', filename='old.js')}}" defer></script> -->
+         {% block head %}{% endblock %}
+    </head>
+    <body>
+           {% block body %}{% endblock %}
+    </body>
+</html>

@@ -1,0 +1,268 @@
+/* import fonts */
+@font-face {
+    font-family: 'Instrument Sans';
+    src: url('../Instrument Sans/InstrumentSans-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-stretch: 75% 125%;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Instrument Sans';
+    src: url('../Instrument Sans/InstrumentSans-Italic-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-stretch: 75% 125%;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../Inter/Inter-VariableFont_wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-stretch: 75% 125%;
+    font-style: normal;
+}
+
+/* reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-family: 'Instrument Sans', 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #5D866C;
+    font-family: 'Instrument Sans', sans-serif;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #E6D8C3;
+}
+
+/* shared container styling */
+.login-container,
+.register-container,
+.forgot-password-container,
+.edit-profile-container,
+.edit-password-container {
+    width: 100%;
+    max-width: 380px;
+    background:#043915ad;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.edit-profile-container {
+    background:#043915ad;
+
+}
+
+/* heading */
+.login-container h2,
+.register-container h2,
+.forgot-password-container h2,
+.edit-password-container h2 {
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* labels */
+.login-container label,
+.register-container label,
+.forgot-password-container label,
+.edit-profile-container label,
+.edit-password-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+/* inputs */
+.login-container input,
+.register-container input,
+.forgot-password-container input,
+.edit-profile-container input,
+.edit-password-container input {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #000000;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    transition: 0.3s ease;
+}
+
+.login-container input:focus,
+.register-container input:focus,
+.forgot-password-container input:focus,
+.edit-password-container input:focus {
+    background: rgb(255, 255, 255);
+    box-shadow: 0 0 8px #000000;
+}
+
+/* buttons */
+.login-button, .edit-button {
+    text-decoration:none;
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background: #E6D8C3;
+    color: #043915;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit-button {
+    display: inline-block; 
+    margin-top: 1rem;
+    padding: 0.5rem;
+}
+
+
+.cancel-button {
+    text-decoration: none;
+    width: 100%;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 6px;
+    margin-top: 1rem;
+    background: #E06B80;
+    color: #fff;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block; 
+}
+
+/* .cancel-button a {
+    text-decoration: none;
+} */
+
+.login-button:hover {
+    background: #B87C4C;
+    transform: translateY(-2px);
+}
+
+.cancel-button:hover {
+    background: #B77466;
+    transform: translateY(-2px);
+}
+
+/* links and paragraphs */
+.login-container p,
+.register-container p,
+.forgot-password-container p
+ {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.login-container a,
+.register-container a,
+.forgot-password-container a {
+    color: #7fffa5;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.login-container a:hover,
+.register-container a:hover,
+.forgot-password-container a:hover {
+    color: #32814b;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    min-height: 100vh;
+    padding: 2rem;
+    background:#5D866C;
+}
+
+/* app preview section */
+.preview-section {
+    flex: 1;
+    max-width: 600px;
+    text-align: center;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.preview-section img {
+    width: 100%;
+    max-width: 550px;
+    /* border-radius: 20px; */
+    /* box-shadow: 0 0 30px rgba(181, 100, 216, 0.4); */
+    margin-bottom: 1.5rem;
+}
+
+.preview-text h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+.preview-text p {
+    font-size: 1rem;
+    max-width: 450px;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* .login-container {
+    width: 100%;
+    max-width: 380px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    backdrop-filter: blur(10px);
+} */
+
+/* responsive behavior
+@media (max-width: 900px) {
+    .page-container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .preview-section img {
+        max-width: 90%;
+    }
+
+    .preview-text h1 {
+        font-size: 1.6rem;
+    }
+
+    .login-container {
+        margin-top: 2rem;
+    }
+} */

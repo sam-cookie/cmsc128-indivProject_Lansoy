@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>Menu</h3>
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+    </div>
+    <nav class="sidebar-nav">
+        <a href="{{ url_for('profile') }}" class="nav-item">
+            <i class="fa-solid fa-list"></i>
+            <span class="nav-text">My lists</span>
+        </a>
+        <a href="{{ url_for('create_collaboration') }}" class="nav-item">
+            <i class="fa-solid fa-plus"></i>
+            <span class="nav-text">Create new collaboration</span>
+        </a>
+        <a href="{{ url_for('collaboration') }}" class="nav-item">
+            <i class="fa-solid fa-layer-group"></i>
+            <span class="nav-text">My Collaborations</span>
+        </a>
+        <a href="{{ url_for('edit_profile', username=user.username) }}" class="nav-item">
+            <i class="fa-solid fa-user-pen"></i>
+            <span class="nav-text">Edit Profile</span>
+        </a>
+        <a href="/settings" class="nav-item">
+            <i class="fa-solid fa-circle-info"></i>
+            <span class="nav-text">About</span>
+        </a>
+        <a href="{{ url_for ('login') }}" class="nav-item">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span class="nav-text">Logout</span>
+        </a>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <div class="container">
+        <header class="header">
+            <div class="greeting">
+                <h1>Manage your collaborations here, </h1>
+                <h2><span class="user-name">@{{ username }}!</span></h2>
+                <p>Be productive with others!</p>
+            </div>
+        </header>
+
+        <!-- Collaboration Lists -->
+        <div class="collaborations-container">
+            <!-- Owned Collaborations -->
+            {% if owned_lists %}
+            <section class="collab-section">
+                <h2 class="section-title">My Created Collaborations</h2>
+                <div class="collab-grid">
+                    {% for list in owned_lists %}
+                    <div class="collab-card owned">
+                        <div class="collab-header">
+                            <h3 class="collab-name">{{ list[1] }}</h3>
+                            <span class="owner-badge">Owner</span>
+                        </div>
+                        {% if list[2] %}
+                        <p class="collab-description">{{ list[2] }}</p>
+                        {% endif %}
+                        <div class="collab-actions">
+                            <a href="{{ url_for('view_collaboration', list_id=list[0]) }}" class="view-collab-btn">
+                                <i class="fa-solid fa-eye"></i>
+                                View Tasks
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+            <hr>
+            <!-- Shared Collaborations -->
+            {% if shared_lists %}
+            <section class="collab-section">
+                <h2 class="section-title">Shared With Me</h2>
+                <div class="collab-grid">
+                    {% for list in shared_lists %}
+                    <div class="collab-card shared">
+                        <div class="collab-header">
+                            
+                            <h3 class="collab-name">{{ list[1] }}</h3>
+                            <span class="member-badge">Member</span>
+                        </div>
+                        {% if list[2] %}
+                        <p class="collab-description">{{ list[2] }}</p>
+                        {% endif %}
+                        <!-- <div class="collab-meta">
+                            <span class="collab-id">ID: {{ list[0] }}</span>
+                        </div> -->
+                        <div class="collab-actions">
+                            <a href="{{ url_for('view_collaboration', list_id=list[0]) }}" class="view-collab-btn">
+                                <i class="fa-solid fa-eye"></i>
+                                View Tasks
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Empty State -->
+            {% if not owned_lists and not shared_lists %}
+            <div class="empty-state">
+                <i class="fa-solid fa-people-group"></i>
+                <h3>No Collaborations Yet</h3>
+                <p>You haven't created or joined any collaborations yet.</p>
+                <a href="{{ url_for('create_collaboration') }}" class="create-first-collab-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    Create Your First Collaboration
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
