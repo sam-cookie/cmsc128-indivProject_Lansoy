@@ -76,8 +76,7 @@ export function createTaskElement(task) {
     if (isCollaboration) {
         taskDiv.setAttribute('data-collab', 'true');
     }
-    
-    // Collaborative tasks include created_by, personal ones don't
+
     const taskMeta = isCollaboration ? 
         `<div class="task-meta">
             <small>Created by: ${task.created_by}</small>

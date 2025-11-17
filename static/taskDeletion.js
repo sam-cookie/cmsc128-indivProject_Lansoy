@@ -4,7 +4,7 @@ const LIST_ID = document.querySelector('[data-collab="true"]') || document.getEl
                 document.getElementById('collab-list-id')?.value : null;
 
 export function initializeTaskDeletion() {
-    // module is initialized through exported functions
+    // Module is initialized through exported functions
 }
 
 export function deleteTaskWithUndo(taskElement, taskId) {
@@ -22,26 +22,28 @@ export function deleteTaskWithUndo(taskElement, taskId) {
 
     // delete animation
     taskElement.style.animation = 'fadeOut 0.3s ease-out';
-
+    
+    // Delete from database
     fetch(`/delete_task/${taskId}`, {
         method: 'DELETE'
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
+            // Remove from DOM after successful database deletion
             setTimeout(() => {
                 taskElement.remove();
                 showUndoNotification(taskData, false);
             }, 300);
         } else {
             console.error('Failed to delete task from database');
-
+            // Restore animation if deletion failed
             taskElement.style.animation = '';
         }
     })
     .catch(error => {
         console.error('Error deleting task:', error);
-
+        // Restore animation if deletion failed
         taskElement.style.animation = '';
     });
 }
@@ -61,15 +63,17 @@ export function deleteCollabTaskWithUndo(taskElement, taskId) {
         isCollab: true
     };
 
+    // delete animation
     taskElement.style.animation = 'fadeOut 0.3s ease-out';
-
+    
+    // Delete from database
     fetch(`/delete_collab_task/${taskId}`, {
         method: 'DELETE'
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-          
+            // Remove from DOM after successful database deletion
             setTimeout(() => {
                 taskElement.remove();
                 
@@ -136,6 +140,7 @@ function showUndoNotification(taskData, isCollab) {
         }
     }, 1000);
 
+    // Undo functionality!!
     undoButton.addEventListener('click', () => {
         clearInterval(countdownInterval);
         if (isCollab) {
@@ -149,7 +154,7 @@ function showUndoNotification(taskData, isCollab) {
 }
 
 function undoTask(taskData) {
-    // restore task in database first
+    // Restore task in database first
     fetch('/add_task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -165,16 +170,19 @@ function undoTask(taskData) {
         const restoredTask = taskData.element;
         restoredTask.setAttribute('data-id', newTask.id);
         taskData.parent.appendChild(restoredTask);
-
+        
+        // reattach event listeners when undo
         attachTaskEvents(restoredTask);
         addSecondsDisplay(restoredTask);
 
+        // add redo animation
         restoredTask.style.animation = 'slideInFromTop 0.5s ease-out';
     })
     .catch(error => {
         console.error('Error restoring task:', error);
     });
     
+    // show message for success undo
     const successToast = document.createElement('div');
     successToast.className = 'success-toast';
     

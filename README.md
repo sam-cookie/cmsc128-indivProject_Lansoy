@@ -1,95 +1,26 @@
-To-do-list App
+This project is a user account management that is yet to be incorporated with the todolist built with flask and sqlite.
+It supports registration, login, password reset using a security question, and profile editing — all without javascript.
 
-By Samantha Lodenn D. Lansoy 
+Backend: Python + Flask
+Database: SQLite (stored locally as accounts.db and collaborations.db)
 
-This project is a simple To-do-list web application that allows users to create, update, and manage tasks.
+To use the web app, make sure to install the following: Python 3.x Flask SQLite
 
-Frontend: HTML, CSS, JavaScript (with Font Awesome icons for styling).
-Backend: Python + Flask.
-Database: SQLite (stored locally as tododatabase.db).
+To run the web app:
+Clone or download this project. Ensure all frontend files (html and CSS) and backend file (accounts.db) are in the same directory. Start the server with: py app.py
 
-The app supports task creation with priority, date, and time, as well as task status updates (backlog, in-progress, completed).
+Open your browser and go to: http://127.0.0.1:5000 or whichever is provided to you.
 
-To use the web app, make sure to install the following:
-Python 3.x
-Flask
-SQLite
+API ENDPOINTS
 
-To run the web app:  
-Clone or download this project.
-Ensure all frontend files (index.html, CSS, JS) and backend file (todolist.py) are in the same directory.
-Start the server with:
-python todolist.py
-
-Open your browser and go to:
-http://127.0.0.1:5000 or whichever is provided to you.
-
-API Endpoints
-
-The backend provides JSON API endpoints for interacting with the database. This helps the frontend communicate with the backend
-to make the user see the changes without reloading.
-
-Add Task
-
-POST /add_task
-
-Request Body (JSON):
-
-{
-  "name": "Finish project",
-  "priority": "high",
-  "date": "2025-09-30",
-  "time": "14:00"
-}
-
-
-Response:
-
-{
-  "id": 1,
-  "name": "Finish project",
-  "priority": "high",
-  "date": "2025-09-30",
-  "time": "14:00"
-}
-
-Edit Task
-
-PUT /edit_task/<task_id>
-
-Request Body (JSON):
-
-{
-  "name": "Submit project",
-  "priority": "mid",
-  "date": "2025-10-01",
-  "time": "16:00"
-}
-
-
-Response:
-
-{ "success": true }
-
-Delete Task
-
-DELETE /delete_task/<task_id>
-
-Response:
-
-{ "success": true }
-
-Update Task Status
-
-PUT /update_task_status/<task_id>
-
-Request Body (JSON):
-
-{ "status": "completed" }
-
-
-Response:
-
-{ "success": true }
+Method - Endpoint - Description
+GET - /login - shows the login page  
+POST - /login - verifies username & password  
+GET - /register - shows the registration page  
+POST - /register - creates a new account  
+GET - /profile/<username> - displays the user’s profile  
+GET/POST - /editprofile/<username> - edits profile info  
+GET/POST - /forgotpassword - verifies security answer  
+GET/POST - /editpassword/<username> - allows password reset  
 
 First part of the lab was in collabaration with Eleah Joy Melchor

@@ -1,32 +1,21 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 import sqlite3
 
 app = Flask(__name__)
 
-def init_db():
-    conn = sqlite3.connect('tododatabase.db')
-    c = conn.cursor()
-    c.execute('''
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            priority TEXT,
-            date TEXT,
-            time TEXT,
-            status TEXT DEFAULT 'backlog'
-        )
-    ''')
-    
-    try:
-        c.execute('ALTER TABLE tasks ADD COLUMN status TEXT DEFAULT "backlog"')
-        conn.commit()
-    except sqlite3.OperationalError:
-        pass
-    
-    conn.commit()
-    conn.close()
-
-init_db()
+def init_tasks_db():
+    with sqlite3.connect("tododatabase.db") as conn:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS tasks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,   -- link tasks to users
+                name TEXT NOT NULL,
+                priority TEXT,
+                date TEXT,
+                time TEXT,
+                status TEXT DEFAULT 'backlog'
+            )
+        """)
 
 @app.route('/')
 def index():
@@ -81,21 +70,39 @@ def index():
                          in_progress_tasks=in_progress_tasks,
                          completed_tasks=completed_tasks)
 
-@app.route('/add_task', methods=['POST'])
+@app.route("/add_task", methods=["POST"])
 def add_task():
-    data = request.get_json()
-    name = data['name']
-    priority = data['priority']
-    date = data['date']
-    time = data['time']
-    conn = sqlite3.connect('tododatabase.db')
-    c = conn.cursor()
-    c.execute('INSERT INTO tasks (name, priority, date, time) VALUES (?, ?, ?, ?)',
-              (name, priority, date, time))
-    conn.commit()
-    task_id = c.lastrowid
-    conn.close()
-    return jsonify({'id': task_id, 'name': name, 'priority': priority, 'date': date, 'time': time})
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.get_json()  # <- parse JSON from fetch
+    name = data.get("name")
+    priority = data.get("priority")
+    date = data.get("date")
+    time = data.get("time")
+    username = session["username"]
+
+    if not name:
+        return jsonify({"error": "Task name is required"}), 400
+
+    with sqlite3.connect("tododatabase.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO tasks (username, name, priority, date, time) VALUES (?, ?, ?, ?, ?)",
+            (username, name, priority, date, time)
+        )
+        task_id = cursor.lastrowid
+        conn.commit()
+
+    # return the task so JS can render it
+    return jsonify({
+        "id": task_id,
+        "name": name,
+        "priority": priority,
+        "date": date,
+        "time": time
+    })
+
 
 @app.route('/edit_task/<int:task_id>', methods=['PUT'])
 def edit_task(task_id):

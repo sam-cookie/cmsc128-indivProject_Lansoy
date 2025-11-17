@@ -42,6 +42,7 @@ export function setupDropZones() {
         });
 
         zone.addEventListener('dragleave', function(e) {
+            // Only remove drag-over if we're actually leaving the zone
             if (!zone.contains(e.relatedTarget)) {
                 zone.classList.remove('drag-over');
             }
@@ -68,6 +69,7 @@ export function setupDropZones() {
 }
 
 function moveTaskToStatus(taskId, newStatus, taskElement, targetZone) {
+    // Update task status in database
     fetch(`/update_task_status/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -129,12 +131,13 @@ function moveCollabTaskToStatus(taskId, newStatus, taskElement, targetZone) {
             showTaskMovedFeedback(taskElement, newStatus);
         } else {
             console.error('Failed to update task status');
-
+            // if update failed, reload back to location
             window.location.reload();
         }
     })
     .catch(error => {
         console.error('Error updating task status:', error);
+        // Restore original position if error occurred
         window.location.reload();
     });
 }

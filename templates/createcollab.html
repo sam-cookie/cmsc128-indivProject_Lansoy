@@ -12,19 +12,19 @@
         </button>
     </div>
     <nav class="sidebar-nav">
-        <a href="{{ url_for('profile') }}" class="nav-item">
+        <a href="{{ url_for('personal.profile') }}" class="nav-item">
             <i class="fa-solid fa-list"></i>
             <span class="nav-text">My lists</span>
         </a>
-        <a href="{{ url_for('create_collaboration') }}" class="nav-item">
+        <a href="{{ url_for('collaboration.create_collaboration') }}" class="nav-item">
             <i class="fa-solid fa-plus"></i>
             <span class="nav-text">Create new collaboration</span>
         </a>
-        <a href="{{ url_for('collaboration') }}" class="nav-item">
+        <a href="{{ url_for('collaboration.collaboration') }}" class="nav-item">
             <i class="fa-solid fa-layer-group"></i>
             <span class="nav-text">My Collaborations</span>
         </a>
-        <a href="{{ url_for('edit_profile', username=user.username) }}" class="nav-item">
+        <a href="{{ url_for('edit_profile', username=username) }}" class="nav-item">
             <i class="fa-solid fa-user-pen"></i>
             <span class="nav-text">Edit Profile</span>
         </a>
@@ -32,7 +32,7 @@
             <i class="fa-solid fa-circle-info"></i>
             <span class="nav-text">About</span>
         </a>
-        <a href="{{ url_for ('login') }}" class="nav-item">
+        <a href="{{ url_for('login') }}" class="nav-item">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="nav-text">Logout</span>
         </a>

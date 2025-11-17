@@ -1,7 +1,7 @@
 import { sortTasks } from './taskSort.js';
 
 export function initializeTaskEdit() {
-    // module is initialized through exported functions
+    // Module is initialized through exported functions
 }
 
 export function openEditModal(taskDiv, taskId, isCollabTask) {

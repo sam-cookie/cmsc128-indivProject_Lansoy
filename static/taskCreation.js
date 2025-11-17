@@ -64,7 +64,7 @@ export function initializeTaskCreation() {
             addTaskBtn.classList.add('loading');
             addTaskBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
             
-
+            // Determine the endpoint based on context
             const endpoint = isCollaboration ? `/add_collab_task/${LIST_ID}` : '/add_task';
             
             fetch(endpoint, {

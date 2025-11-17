@@ -7,7 +7,7 @@ import { sortTasks } from './taskSort.js';
 // import { initializeSidebar } from './sidebar.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // initialize all modules
+    // Initialize all modules
     initializeTaskCreation();
     initializeTaskDeletion();
     initializeTaskEdit();
@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDragDrop();
     // initializeSidebar();
     
+    // Set up drop zones
     setupDropZones();
     
     
-    // set today's date as default
+    // Set today's date as default
     const dateInput = document.getElementById('date-input');
     const today = new Date().toISOString().split('T')[0];
     if (dateInput) dateInput.value = today;
