@@ -3,33 +3,38 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-<div class="register-container">
-    <h2>Register</h2>
-    {% if error %}
-    <p style="color: #ff6b6b; margin-bottom: 1rem;">{{ error }}</p>
-    {% endif %}
+<div class ="form-body"> 
 
-    {% if message %}
-    <p style="color: #90ee90; margin-bottom: 1rem;">{{ message }}</p>
-    {% endif %}
-    <form method="POST" action="/register">
-        <label for="fullName">Full Name:</label>
-        <input type="text" id="fullName" name="fullName" required><br>
+    <div class="reg-container">
+        <h2>Register</h2>
+        {% if error %}
+        <p class="reg-error">{{ error }}</p>
+        {% endif %}
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br>
+        {% if message %}
+        <p class="reg-message">{{ message }}</p>
+        {% endif %}
+        
+        <form method="POST" action="/register">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" name="fullName" required>
 
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label for="securityQuestion">For recovery purposes, what's your go to karaoke song?</label>
-        <input type="password" id="securityQuestion" name="securityQuestion" required><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
 
-        <button class="login-button" type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+            <label for="securityQuestion">For recovery purposes, what's your go to karaoke song?</label>
+            <input type="password" id="securityQuestion" name="securityQuestion" required>
+
+            <button class="reg-button" type="submit">Register</button>
+        </form>
+
+        <p class="reg-bottom">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+    </div>
 </div>
 {% endblock %}

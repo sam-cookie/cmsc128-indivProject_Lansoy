@@ -8,7 +8,7 @@ COLLAB_DB = "collaborations.db"
 def init_collaborations_db():
     if not os.path.exists(COLLAB_DB):
         with sqlite3.connect(COLLAB_DB) as conn:
-            # Table for collaboration lists
+            # table for collaboration lists
             conn.execute("""
                 CREATE TABLE collab_lists (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +19,7 @@ def init_collaborations_db():
                 )
             """)
             
-            # Table for collaboration members
+            # table for collaboration members
             conn.execute("""
                 CREATE TABLE collab_members (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,7 +31,7 @@ def init_collaborations_db():
                 )
             """)
             
-            # Table for collaborative tasks
+            # table for collaborative tasks
             conn.execute("""
                 CREATE TABLE collab_tasks (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

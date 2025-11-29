@@ -1,132 +1,75 @@
-
+/* Container matches collab-card style */
 .collab-container {
-    width: 100%;
-    max-width: 450px;
-    background: #043915ad;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
-    text-align: center;
-    backdrop-filter: blur(10px);
+    max-width: 600px;
     margin: 2rem auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
 }
 
+/* Header */
 .collab-header h1 {
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 1.5rem;
     font-size: 1.8rem;
-    color: #E6D8C3;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
     text-align: center;
 }
 
-.collab-container form {
-    text-align: left;
-}
-
+/* Labels */
 .collab-container label {
     display: block;
-    text-align: left;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: #ffffff;
-    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #374151;
+    font-size: 0.95rem;
 }
 
 .collab-container input[type="text"],
 .collab-container textarea {
     width: 100%;
     padding: 0.75rem;
-    border-radius: 6px;
-    border: none;
-    outline: none;
-    background: rgba(255, 255, 255, 0.1);
-    color: #000000;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
     margin-bottom: 1.2rem;
     font-size: 1rem;
-    transition: 0.3s ease;
-    font-family: 'Instrument Sans', sans-serif;
+    transition: 0.2s ease-in-out;
 }
 
 .collab-container input[type="text"]:focus,
 .collab-container textarea:focus {
-    background: rgb(255, 255, 255);
-    box-shadow: 0 0 8px #000000;
-}
-
-.collab-container textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.collab-container input::placeholder,
-.collab-container textarea::placeholder {
-    color: #666;
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
 }
 
 .create-collab-button {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.8rem;
     border: none;
-    border-radius: 6px;
-    background: #E6D8C3;
-    color: #043915;
+    border-radius: 10px;
+    background: #2563eb; 
+    color: #ffffff;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
     font-size: 1rem;
-    margin-top: 0.5rem;
+    cursor: pointer;
+    transition: 0.25s ease;
 }
 
 .create-collab-button:hover {
-    background: #B87C4C;
+    background: #1e4fc4;
     transform: translateY(-2px);
-    color: #fff;
 }
 
-
+/* Form spacing */
 .collab-container form > * {
     margin-bottom: 1rem;
 }
 
 .collab-container form br {
     display: none;
-}
-
-.collab-actions {
-    text-decoration: none;
-}
-
-@media (max-width: 768px) {
-    .collab-container {
-        max-width: 90%;
-        padding: 2rem;
-        margin: 1rem auto;
-    }
-    
-    .collab-header h1 {
-        font-size: 1.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .collab-container {
-        padding: 1.5rem;
-    }
-    
-    .collab-header h1 {
-        font-size: 1.3rem;
-    }
-    
-    .collab-container input[type="text"],
-    .collab-container textarea {
-        padding: 0.6rem;
-        font-size: 0.9rem;
-    }
-    
-    .create-collab-button {
-        padding: 0.6rem;
-        font-size: 0.9rem;
-    }
 }

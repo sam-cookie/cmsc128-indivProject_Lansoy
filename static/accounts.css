@@ -22,7 +22,7 @@
     font-stretch: 75% 125%;
     font-style: normal;
 }
-
+s
 /* reset */
 * {
     margin: 0;
@@ -162,7 +162,7 @@ body {
 } */
 
 .login-button:hover {
-    background: #B87C4C;
+    background: #3182ce;
     transform: translateY(-2px);
 }
 
@@ -183,7 +183,7 @@ body {
 .login-container a,
 .register-container a,
 .forgot-password-container a {
-    color: #7fffa5;
+    color: #3182ce;
     text-decoration: none;
     transition: color 0.3s ease;
 }
@@ -191,7 +191,7 @@ body {
 .login-container a:hover,
 .register-container a:hover,
 .forgot-password-container a:hover {
-    color: #32814b;
+    color: #3182ce;
 }
 
 .page-container {

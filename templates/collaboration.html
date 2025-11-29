@@ -32,10 +32,10 @@
             <i class="fa-solid fa-user-pen"></i>
             <span class="nav-text">Edit Profile</span>
         </a>
-        <a href="/settings" class="nav-item">
+        <!-- <a href="/settings" class="nav-item">
             <i class="fa-solid fa-circle-info"></i>
             <span class="nav-text">About</span>
-        </a>
+        </a> -->
         <a href="{{ url_for('login') }}" class="nav-item">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="nav-text">Logout</span>
@@ -46,10 +46,10 @@
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
     <div class="container">
-        <header class="header">
-            <div class="greeting">
-                <h1>Manage your collaborations here, </h1>
-                <h2><span class="user-name">@{{ username }}!</span></h2>
+        <header class="collab-view-header">
+            <div class="collab-greeting">
+                <h1>Manage your collaborations here, <span class="user-name">@{{ username }}!</span></h1>
+                <!-- <h2><span class="user-name">@{{ username }}!</span></h2> -->
                 <p>Be productive with others!</p>
             </div>
         </header>
@@ -90,7 +90,6 @@
                     {% for list in shared_lists %}
                     <div class="collab-card shared">
                         <div class="collab-header">
-                            
                             <h3 class="collab-name">{{ list[1] }}</h3>
                             <span class="member-badge">Member</span>
                         </div>

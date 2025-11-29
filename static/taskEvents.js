@@ -46,7 +46,6 @@ export function addSecondsDisplay(taskDiv) {
     secondsDisplay.className = 'seconds-display';
     dateTimeDiv.appendChild(secondsDisplay);
 
-    // Add hover event listeners
     dateTimeDiv.addEventListener('mouseenter', function() {
         const timeText = dateTimeDiv.textContent.trim();
         const timeMatch = timeText.match(/(\d{1,2}):(\d{2})/);
@@ -101,7 +100,7 @@ export function createTaskElement(task) {
         </div>
     `;
     
-    // Attach event listeners
+
     attachTaskEvents(taskDiv);
     addSecondsDisplay(taskDiv);
     

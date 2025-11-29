@@ -1,0 +1,103 @@
+
+.edit-profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 14px;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Heading */
+.edit-profile-container h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    text-align: center;
+}
+
+/* Labels */
+.edit-profile-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #374151;
+    font-size: 0.95rem;
+}
+
+/* Inputs */
+.edit-profile-container input[type="text"],
+.edit-profile-container input[type="email"],
+.edit-profile-container input[type="password"] {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    transition: 0.2s ease-in-out;
+}
+
+.edit-profile-container input[type="text"]:focus,
+.edit-profile-container input[type="email"]:focus,
+.edit-profile-container input[type="password"]:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    outline: none;
+}
+
+/* Buttons */
+.edit-profile-container .login-button {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+}
+
+.edit-profile-container .login-button:hover {
+    background: #1e4fc4;
+    transform: translateY(-2px);
+}
+
+.edit-profile-container .cancel-button {
+    display: block;
+    width: 100%;   
+    text-align: center;
+    text-decoration: none;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 10px;
+    background: #e5e7eb;
+    color: #1f2937;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.25s ease;
+    margin-top: 0.5rem;
+}
+
+
+.edit-profile-container .cancel-button:hover {
+    background: #d1d5db;
+    transform: translateY(-2px);
+}
+
+.edit-profile-container form > * {
+    margin-bottom: 1rem;
+}
+
+.edit-profile-container form br {
+    display: none;
+}

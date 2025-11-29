@@ -17,7 +17,7 @@ DB_NAME = "accounts.db"
 TASK_DB = "tododatabase.db"
 COLLAB_DB = "collaborations.db"
 
-# --- ACCOUNT ROUTES ---
+
 @app.route("/")
 def home():
     return redirect("/login")

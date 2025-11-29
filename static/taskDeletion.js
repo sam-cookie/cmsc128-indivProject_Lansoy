@@ -4,7 +4,7 @@ const LIST_ID = document.querySelector('[data-collab="true"]') || document.getEl
                 document.getElementById('collab-list-id')?.value : null;
 
 export function initializeTaskDeletion() {
-    // Module is initialized through exported functions
+
 }
 
 export function deleteTaskWithUndo(taskElement, taskId) {
@@ -23,27 +23,23 @@ export function deleteTaskWithUndo(taskElement, taskId) {
     // delete animation
     taskElement.style.animation = 'fadeOut 0.3s ease-out';
     
-    // Delete from database
     fetch(`/delete_task/${taskId}`, {
         method: 'DELETE'
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // Remove from DOM after successful database deletion
             setTimeout(() => {
                 taskElement.remove();
                 showUndoNotification(taskData, false);
             }, 300);
         } else {
             console.error('Failed to delete task from database');
-            // Restore animation if deletion failed
             taskElement.style.animation = '';
         }
     })
     .catch(error => {
         console.error('Error deleting task:', error);
-        // Restore animation if deletion failed
         taskElement.style.animation = '';
     });
 }
@@ -65,19 +61,15 @@ export function deleteCollabTaskWithUndo(taskElement, taskId) {
 
     // delete animation
     taskElement.style.animation = 'fadeOut 0.3s ease-out';
-    
-    // Delete from database
     fetch(`/delete_collab_task/${taskId}`, {
         method: 'DELETE'
     })
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // Remove from DOM after successful database deletion
             setTimeout(() => {
                 taskElement.remove();
-                
-                // Check if container is now empty and show empty state
+
                 const container = taskData.parent;
                 if (container.children.length === 0) {
                     const emptyState = document.createElement('div');
@@ -93,14 +85,14 @@ export function deleteCollabTaskWithUndo(taskElement, taskId) {
             }, 300);
         } else {
             console.error('Failed to delete task from database');
-            // Restore animation if deletion failed
+
             taskElement.style.animation = '';
             alert(data.error || 'Failed to delete task');
         }
     })
     .catch(error => {
         console.error('Error deleting task:', error);
-        // Restore animation if deletion failed
+
         taskElement.style.animation = '';
     });
 }
@@ -140,7 +132,7 @@ function showUndoNotification(taskData, isCollab) {
         }
     }, 1000);
 
-    // Undo functionality!!
+    // undo functionality!!
     undoButton.addEventListener('click', () => {
         clearInterval(countdownInterval);
         if (isCollab) {
@@ -154,7 +146,7 @@ function showUndoNotification(taskData, isCollab) {
 }
 
 function undoTask(taskData) {
-    // Restore task in database first
+
     fetch('/add_task', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -212,7 +204,6 @@ function undoCollabTask(taskData) {
         const restoredTask = taskData.element;
         restoredTask.setAttribute('data-id', newTask.id);
         
-    
         const metaElement = restoredTask.querySelector('.task-meta small');
         if (metaElement) {
             metaElement.textContent = `Created by: ${newTask.created_by}`;

@@ -15,7 +15,7 @@ def collaboration():
 
     username = session["username"]
 
-    # Get user info for the sidebar
+    # get user info for the sidebar
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username=?", (username,))
@@ -62,8 +62,25 @@ def create_collaboration():
         members_input = request.form["collab_members"]
         owner_username = session["username"]
 
-        members = [member.strip() for member in members_input.split(",")] if members_input else []
-        
+        members = [m.strip() for m in members_input.split(",")] if members_input else []
+
+        # collect invalid usernames first
+        invalid_users = []
+        for member in members:
+            if member and member != owner_username:
+                with sqlite3.connect(DB_NAME) as accounts_conn:
+                    accounts_cursor = accounts_conn.cursor()
+                    accounts_cursor.execute(
+                        "SELECT username FROM accounts WHERE username = ?", (member,)
+                    )
+                    if not accounts_cursor.fetchone():
+                        invalid_users.append(member)
+
+        # stop creation
+        if invalid_users:
+            session["toast_error"] = f"The following users do not exist: {', '.join(invalid_users)}"
+            return redirect(url_for("collaboration.create_collaboration"))
+
         try:
             with sqlite3.connect(COLLAB_DB) as conn:
                 cursor = conn.cursor()
@@ -72,48 +89,42 @@ def create_collaboration():
                     INSERT INTO collab_lists (list_name, description, owner_username)
                     VALUES (?, ?, ?)
                 """, (list_name, description, owner_username))
-                list_id = cursor.lastrowid
                 
-                # adding owner as a member
+                list_id = cursor.lastrowid
+
+                # owner is always a member
                 cursor.execute("""
                     INSERT INTO collab_members (list_id, member_username)
                     VALUES (?, ?)
                 """, (list_id, owner_username))
-                
-                #checker
+
+                # add valid members
                 for member in members:
-                    if member and member != owner_username:  
-                        with sqlite3.connect(DB_NAME) as accounts_conn:
-                            accounts_cursor = accounts_conn.cursor()
-                            accounts_cursor.execute("SELECT username FROM accounts WHERE username = ?", (member,))
-                            if accounts_cursor.fetchone():
-                                cursor.execute("""
-                                    INSERT INTO collab_members (list_id, member_username)
-                                    VALUES (?, ?)
-                                """, (list_id, member))
-                            else: 
-                                print(f"User '{member}' does not exist. Skipping.")
-                
+                    if member and member != owner_username:
+                        cursor.execute("""
+                            INSERT INTO collab_members (list_id, member_username)
+                            VALUES (?, ?)
+                        """, (list_id, member))
+
                 conn.commit()
-            
-            session["message"] = f"Collaboration '{list_name}' created successfully!"
+
+            # session["message"] = f"Collaboration '{list_name}' created successfully!"
             return redirect(url_for("collaboration.collaboration"))
-            
+
         except sqlite3.Error as e:
             return f"Error creating collaboration: {str(e)}", 500
-    
+
     username = session["username"]
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT username FROM accounts WHERE username = ?", (username,))
         user_data = cursor.fetchone()
-        
-        if user_data:
-            user = {"username": user_data[0]}
-        else:
-            user = {"username": username}
-    
+
+    user = {"username": user_data[0] if user_data else username}
+
     return render_template("createcollab.html", user=user)
+
+
 
 @collab_bp.route("/collaboration/<int:list_id>")
 def view_collaboration(list_id):
@@ -184,7 +195,7 @@ def add_collab_member(list_id):
     if not new_member:
         return jsonify({"error": "Username required"}), 400
     
-    # Check if current user is the owner
+    # check if current user is the owner
     with sqlite3.connect(COLLAB_DB) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT owner_username FROM collab_lists WHERE id = ?", (list_id,))
@@ -193,14 +204,14 @@ def add_collab_member(list_id):
         if not result or result[0] != username:
             return jsonify({"error": "Only the owner can add members"}), 403
         
-        # Check if new member exists
+        # check if new member exists
         with sqlite3.connect(DB_NAME) as accounts_conn:
             accounts_cursor = accounts_conn.cursor()
             accounts_cursor.execute("SELECT username FROM accounts WHERE username = ?", (new_member,))
             if not accounts_cursor.fetchone():
                 return jsonify({"error": "User not found"}), 404
         
-        # Add member
+        # add member
         try:
             cursor.execute("""
                 INSERT INTO collab_members (list_id, member_username)
@@ -228,7 +239,7 @@ def add_collab_task(list_id):
     if not name:
         return jsonify({"error": "Task name required"}), 400
     
-    # Check if user has access to this collaboration
+    # check if user has access to this collaboration
     with sqlite3.connect(COLLAB_DB) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -239,7 +250,7 @@ def add_collab_task(list_id):
         if not cursor.fetchone():
             return jsonify({"error": "You don't have access to this collaboration"}), 403
         
-        # Add task
+        # add task
         cursor.execute("""
             INSERT INTO collab_tasks (list_id, name, priority, date, time, created_by)
             VALUES (?, ?, ?, ?, ?, ?)
@@ -269,7 +280,7 @@ def edit_collab_task(task_id):
     date = data.get("date")
     time = data.get("time")
     
-    # Check if user has access to edit this task
+    # check if user has access to edit this task
     with sqlite3.connect(COLLAB_DB) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -297,7 +308,7 @@ def delete_collab_task(task_id):
     
     username = session["username"]
     
-    # Check if user has access to delete this task
+    # check if user has access to delete this task
     with sqlite3.connect(COLLAB_DB) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -310,7 +321,7 @@ def delete_collab_task(task_id):
         if not result:
             return jsonify({"error": "You don't have access to delete this task"}), 403
         
-        # Allow deletion if user created the task or is the list owner
+        # allow deletion if user created the task or is the list owner
         list_id = result[0]
         created_by = result[1]
         
@@ -337,7 +348,7 @@ def update_collab_task_status(task_id):
     if status not in ["backlog", "in-progress", "completed"]:
         return jsonify({"success": False, "error": "Invalid status"})
     
-    # Check if user has access to this task
+    # check if user has access to this task
     with sqlite3.connect(COLLAB_DB) as conn:
         cursor = conn.cursor()
         cursor.execute("""

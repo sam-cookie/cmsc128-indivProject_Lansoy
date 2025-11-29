@@ -1,7 +1,7 @@
 import { sortTasks } from './taskSort.js';
 
 export function initializeTaskEdit() {
-    // Module is initialized through exported functions
+
 }
 
 export function openEditModal(taskDiv, taskId, isCollabTask) {
@@ -14,7 +14,7 @@ export function openEditModal(taskDiv, taskId, isCollabTask) {
     const editForm = document.createElement('form');
     editForm.className = 'edit-overlay';
 
-    // Create form header
+    // create form header
     const formHeader = document.createElement('div');
     formHeader.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;';
     formHeader.innerHTML = '<i class="fa-solid fa-edit"></i><h3 style="margin: 0; color: var(--text-primary);">Edit Task</h3>';
@@ -66,7 +66,6 @@ export function openEditModal(taskDiv, taskId, isCollabTask) {
     editForm.appendChild(editTimeInput);
     editForm.appendChild(buttonContainer);
 
-    // Add backdrop for emphasis
     const backdrop = document.createElement('div');
     backdrop.style.cssText = `
         position: fixed;
@@ -96,7 +95,6 @@ export function openEditModal(taskDiv, taskId, isCollabTask) {
 
     backdrop.addEventListener('click', closeModal);
 
-    // Keyboard shortcuts
     editForm.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeModal();
@@ -115,7 +113,6 @@ export function openEditModal(taskDiv, taskId, isCollabTask) {
         saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
         saveBtn.disabled = true;
 
-        // Determine the endpoint based on context
         const endpoint = isCollabTask ? `/edit_collab_task/${taskId}` : `/edit_task/${taskId}`;
 
         fetch(endpoint, {

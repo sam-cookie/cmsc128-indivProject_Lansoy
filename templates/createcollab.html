@@ -28,10 +28,10 @@
             <i class="fa-solid fa-user-pen"></i>
             <span class="nav-text">Edit Profile</span>
         </a>
-        <a href="/settings" class="nav-item">
+        <!-- <a href="/settings" class="nav-item">
             <i class="fa-solid fa-circle-info"></i>
             <span class="nav-text">About</span>
-        </a>
+        </a> -->
         <a href="{{ url_for('login') }}" class="nav-item">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="nav-text">Logout</span>
@@ -41,21 +41,20 @@
 
 
 <div class="main-content" id="mainContent">
-    <div class="collab-container"> 
-        <div class="collab-header">
-            <h1>Create a New Collaboration</h1>
-            <form method="POST" action="/create_collaboration">
-                <label for="collab_name">Collaboration Name:</label>
-                <input type="text" id="collab_name" name="collab_name" required><br>
+    <div class="collab-container">
+        <h1>Create a New Collaboration</h1>
+        <form method="POST" action="/create_collaboration">
+            <label for="collab_name">Collaboration Name:</label>
+            <input type="text" id="collab_name" name="collab_name" required>
 
-                <label for="collab_description">Description:</label>
-                <textarea id="collab_description" name="collab_description" rows="4" required></textarea><br>
+            <label for="collab_description">Description:</label>
+            <textarea id="collab_description" name="collab_description" rows="4" required></textarea>
 
-                <label for="collab_members">Add Members (comma-separated usernames):</label>
-                <input type="text" id="collab_members" name="collab_members"><br>
+            <label for="collab_members">Add Members (comma-separated usernames):</label>
+            <input type="text" id="collab_members" name="collab_members">
 
-                <button type="submit" class="create-collab-button">Create Collaboration</button>
-        </div>
+            <button type="submit" class="create-collab-button">Create Collaboration</button>
+        </form>
     </div>
 </div>
 

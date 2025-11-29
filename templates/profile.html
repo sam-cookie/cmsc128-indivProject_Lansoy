@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block body %}
-<!-- Sidebar -->
+
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h3>Menu</h3>
@@ -15,8 +15,8 @@
             <i class="fa-solid fa-chevron-left"></i>
         </button>
     </div>
-    <nav class="sidebar-nav">
-         <a href="{{ url_for('personal.profile') }}" class="nav-item">
+        <nav class="sidebar-nav">
+        <a href="{{ url_for('personal.profile') }}" class="nav-item">
             <i class="fa-solid fa-list"></i>
             <span class="nav-text">My lists</span>
         </a>
@@ -32,10 +32,10 @@
             <i class="fa-solid fa-user-pen"></i>
             <span class="nav-text">Edit Profile</span>
         </a>
-        <a href="/settings" class="nav-item">
+        <!-- <a href="/settings" class="nav-item">
             <i class="fa-solid fa-circle-info"></i>
             <span class="nav-text">About</span>
-        </a>
+        </a> -->
         <a href="{{ url_for('login') }}" class="nav-item">
             <i class="fa-solid fa-right-from-bracket"></i>
             <span class="nav-text">Logout</span>
@@ -43,125 +43,133 @@
     </nav>
 </div>
 
-<!-- Main Content -->
-<div class="main-content" id="mainContent">
-    <div class="container">
-        <header class="header">
-            <div class="greeting">
-                <h1>Hello, </h1>
-                <h2><span class="user-name">@{{ user.username }}!</span></h2>
-                <p>Here's your tasks for today!</p>
-                <!-- <button id="logout-button">
-                    <a href="/logout" class="logout-btn">
-                    <i class="fa-solid fa-right-from-bracket"></i> Logout </a>
-                </button> -->
-            </div>
-            <div class="task-inputs">
-                <div class="task-bar">
-                    <input type="text" id="task-input" placeholder="Enter a new task...">
-                    <div class="priority-div"> 
-                        <select id="priority-select" name="priority">
-                            <option value="high" style="background:#D85A5C;">High Priority</option>
-                            <option value="mid" style="background: #DE7428;">Mid Priority</option>
-                            <option value="low" style="background: #55813F">Low Priority</option>
-                        </select>
-                    </div> 
-                    <input type="date" id="date-input" name="date">
-                    <input type="time" id="time-input">
-                </div>
+<div class="container" id="mainContent"></div>
+    <header class="header-profile">
+        <div class="greeting">
+            <!-- <p style="color: red; font-weight: bold;">✓ Template updated successfully!</p> -->
+            <h2>Hello, <span class="user-name">@{{ user.username }}!</span></h2>
+            <p>Here's your tasks for today!</p>
+        </div>
+
+        <div class="task-inputs">
+            <div class="task-bar">
+                <input type="text" id="task-input" placeholder="Enter a new task...">
+                <div class="priority-div"> 
+                    <select id="priority-select" name="priority">
+                        <option value="high" style="background:#D85A5C;">High Priority</option>
+                        <option value="mid" style="background: #DE7428;">Mid Priority</option>
+                        <option value="low" style="background: #55813F">Low Priority</option>
+                    </select>
+                </div> 
+                <input type="date" id="date-input" name="date">
+                <input type="time" id="time-input">
                 <button id="add-task-button">
                     <i class="fa-solid fa-plus"></i>
                     Add Task
                 </button>
             </div>
-        </header>
+            <!-- <button id="add-task-button">
+                <i class="fa-solid fa-plus"></i>
+                Add Task
+            </button> -->
+        </div>
+    </header>
 
-        <div class="tasks-container">
-            <section class="column" data-status="backlog">
-                <h2>BACKLOG↓</h2>
+<div class="tasks-container">
+    <section class="column" data-status="backlog">
+        <h2>BACKLOG↓</h2>
+        <div id="task-card" class="drop-zone" data-status="backlog">
+            {% for task in tasks %}
+            <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
+                <div class="task-header">
+                    <div class="task-name">{{ task['name'] }}</div>
+                    <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
+                </div>
+                <div class="task-content">
+                    <div class="task-date">{{ task['date'] }}</div>
+                    <div class="task-time">
+                        <i class="fa-solid fa-clock"></i>
+                        {{ task['time'] }}
+                    </div>
+                </div>
+                <div class="task-actions">
+                    <i class="fa-solid fa-pen" title="Edit task"></i>
+                    <i class="fa-solid fa-trash" title="Delete task"></i>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not tasks %}
+                <div class="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No tasks in backlog</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
 
-                <div class="task-list drop-zone" data-empty="{% if tasks %}false{% else %}true{% endif %}">
-                    {% for task in tasks %}
-                    <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
-                        <div class="task-header">
-                            <div class="task-name">{{ task['name'] }}</div>
-                            <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
-                        </div>
-                        <div class="task-content">
-                            <div class="task-date">{{ task['date'] }}</div>
-                            <div class="task-time">
-                                <i class="fa-solid fa-clock"></i>
-                                {{ task['time'] }}
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <i class="fa-solid fa-pen edit-task"></i>
-                            <i class="fa-solid fa-trash delete-task"></i>
+    <section class="column" data-status="in-progress">
+        <h2>IN PROGRESS→</h2>
+        <div class="drop-zone" data-status="in-progress">
+            {% if in_progress_tasks %}
+                {% for task in in_progress_tasks %}
+                <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
+                    <div class="task-header">
+                        <div class="task-name">{{ task['name'] }}</div>
+                        <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-date">{{ task['date'] }}</div>
+                        <div class="task-time">
+                            <i class="fa-solid fa-clock"></i>
+                            {{ task['time'] }}
                         </div>
                     </div>
-                    {% endfor %}
+                    <div class="task-actions">
+                        <i class="fa-solid fa-pen" title="Edit task"></i>
+                        <i class="fa-solid fa-trash" title="Delete task"></i>
+                    </div>
                 </div>
-
-            </section>
-
-            <section class="column" data-status="in-progress">
-                <h2>IN PROGRESS→</h2>
-                <div class="task-list drop-zone" data-empty="{% if in_progress_tasks %}false{% else %}true{% endif %}">
-                {% if in_progress_tasks %}
-                        {% for task in in_progress_tasks %}
-                        <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
-                            <div class="task-header">
-                                <div class="task-name">{{ task['name'] }}</div>
-                                <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
-                            </div>
-                            <div class="task-content">
-                                <div class="task-date">{{ task['date'] }}</div>
-                                <div class="task-time">
-                                    <i class="fa-solid fa-clock"></i> {{ task['time'] }}
-                                </div>
-                            </div>
-                            <div class="task-actions">
-                                <i class="fa-solid fa-pen edit-task"></i>
-                                <i class="fa-solid fa-trash delete-task"></i>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <i class="fa-solid fa-hourglass-half"></i>
-                        <p>There are no tasks in progress.</p>
-                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fa-solid fa-hourglass-half"></i>
+                    <p>No tasks in progress</p>
                 </div>
-            </section>
-            <section class="column" data-status="completed">
-                <h2>COMPLETED↑</h2>
-                <div class="task-list drop-zone" data-empty="{% if completed_tasks %}false{% else %}true{% endif %}">
-                    {% if completed_tasks %}
-                        {% for task in completed_tasks %}
-                        <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
-                            <div class="task-header">
-                                <div class="task-name">{{ task['name'] }}</div>
-                                <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
-                            </div>
-                            <div class="task-content">
-                                <div class="task-date">{{ task['date'] }}</div>
-                                <div class="task-time">
-                                    <i class="fa-solid fa-clock"></i>
-                                    {{ task['time'] }}
-                                </div>
-                            </div>
-                            <div class="task-actions">
-                                <i class="fa-solid fa-pen edit-task"></i>
-                                <i class="fa-solid fa-trash delete-task"></i>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <i class="fa-solid fa-trophy"></i>
-                        <p>There are no completed tasks.</p>
-                    {% endif %}
-                </div>
-            </section>
+            {% endif %}
         </div>
-    </div>
+    </section>
+
+    <section class="column" data-status="completed">
+        <h2>COMPLETED↑</h2>
+        <div class="drop-zone" data-status="completed">
+            {% if completed_tasks %}
+                {% for task in completed_tasks %}
+                <div class="task-card {{ task['priority'] }}" data-id="{{ task['id'] }}" draggable="true">
+                    <div class="task-header">
+                        <div class="task-name">{{ task['name'] }}</div>
+                        <div class="task-priority-badge {{ task['priority'] }}">{{ task['priority']|title }}</div>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-date">{{ task['date'] }}</div>
+                        <div class="task-time">
+                            <i class="fa-solid fa-clock"></i>
+                            {{ task['time'] }}
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <i class="fa-solid fa-pen" title="Edit task"></i>
+                        <i class="fa-solid fa-trash" title="Delete task"></i>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fa-solid fa-trophy"></i>
+                    <p>No completed tasks</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
 </div>
 {% endblock %}
