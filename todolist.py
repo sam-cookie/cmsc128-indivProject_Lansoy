@@ -75,7 +75,7 @@ def add_task():
     if "username" not in session:
         return jsonify({"error": "Not logged in"}), 401
 
-    data = request.get_json()  # <- parse JSON from fetch
+    data = request.get_json() 
     name = data.get("name")
     priority = data.get("priority")
     date = data.get("date")
@@ -94,7 +94,6 @@ def add_task():
         task_id = cursor.lastrowid
         conn.commit()
 
-    # return the task so JS can render it
     return jsonify({
         "id": task_id,
         "name": name,

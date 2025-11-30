@@ -464,13 +464,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 showTaskMovedFeedback(taskElement, newStatus);
             } else {
                 console.error('Failed to update task status');
-                // if update failed, reload back to location
                 window.location.reload();
             }
         })
         .catch(error => {
             console.error('Error updating task status:', error);
-            // Restore original position if error occurred
             window.location.reload();
         });
     }
@@ -517,24 +515,22 @@ document.addEventListener('DOMContentLoaded', function() {
             parent: taskElement.parentElement
         };
 
-        // delete animation
         taskElement.style.animation = 'fadeOut 0.3s ease-out';
         
-        // Delete from database
         fetch(`/delete_task/${taskId}`, {
             method: 'DELETE'
         })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
-                // Remove from DOM after successful database deletion
+            
                 setTimeout(() => {
                     taskElement.remove();
                     showUndoNotification(taskData);
                 }, 300);
             } else {
                 console.error('Failed to delete task from database');
-                // Restore animation if deletion failed
+        
                 taskElement.style.animation = '';
             }
         })

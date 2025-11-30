@@ -81,7 +81,6 @@ export function initializeTaskCreation() {
                 
                 const taskElement = createTaskElement(task);
                 
-                // SMARTER CONTAINER DETECTION
                 let backlogContainer;
                 if (isCollaboration) {
                     backlogContainer = document.querySelector('[data-status="backlog"] .drop-zone') || 
@@ -98,7 +97,6 @@ export function initializeTaskCreation() {
                 
                 if (!backlogContainer) {
                     console.error('Could not find container for new task');
-                    // Fallback: try to find any drop-zone in backlog column
                     const backlogColumn = document.querySelector('[data-status="backlog"]') || 
                                          document.querySelector('.column[data-status="backlog"]');
                     if (backlogColumn) {
@@ -115,8 +113,7 @@ export function initializeTaskCreation() {
                     
                     backlogContainer.appendChild(taskElement);
                     taskElement.classList.add('new-task');
-                    
-                    // RE-INITIALIZE EMPTY STATES FOR ALL COLUMNS
+                
                     initializeEmptyStates();
                 }
                 
@@ -150,7 +147,6 @@ export function initializeTaskCreation() {
         }
     }
 
-    // Initialize empty states on page load
     initializeEmptyStates();
 }
 
@@ -208,9 +204,7 @@ function initializeEmptyStates() {
             }
         });
 
-        // Now handle the proper empty state
         if (!hasTasks && !hasEmptyState) {
-            // Create proper empty state
             const emptyState = document.createElement('div');
             emptyState.className = 'empty-state';
             
@@ -245,7 +239,6 @@ function initializeEmptyStates() {
             
             zone.appendChild(emptyState);
         } else if (hasTasks && hasEmptyState) {
-            // Remove empty state if there are tasks
             hasEmptyState.remove();
         }
     });

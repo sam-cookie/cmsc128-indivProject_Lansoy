@@ -1,4 +1,4 @@
-/* Container matches collab-card style */
+
 .collab-container {
     max-width: 600px;
     margin: 2rem auto;
@@ -18,7 +18,7 @@
     text-align: center;
 }
 
-/* Labels */
+
 .collab-container label {
     display: block;
     font-weight: 600;
