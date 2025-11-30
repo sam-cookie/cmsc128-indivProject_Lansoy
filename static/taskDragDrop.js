@@ -2,29 +2,51 @@ export function initializeDragDrop() {
     // Module is initialized through setupDropZones
 }
 
+export function sortTasks(container = null) {
+    // if container not passed, sort all drop-zones
+    const containers = container ? [container] : document.querySelectorAll('.drop-zone');
+
+    containers.forEach(zone => {
+        const tasks = Array.from(zone.querySelectorAll('.task-card'));
+
+        tasks.sort((a, b) => {
+            const priorityOrder = { high: 1, mid: 2, low: 3 };
+            const aPriority = Object.keys(priorityOrder).find(p => a.classList.contains(p));
+            const bPriority = Object.keys(priorityOrder).find(p => b.classList.contains(p));
+
+            // compare priority
+            if (priorityOrder[aPriority] !== priorityOrder[bPriority]) {
+                return priorityOrder[aPriority] - priorityOrder[bPriority];
+            }
+
+            // compare date + time
+            const aDate = new Date(`${a.querySelector('.task-date')?.textContent} ${a.querySelector('.task-time')?.textContent}`);
+            const bDate = new Date(`${b.querySelector('.task-date')?.textContent} ${b.querySelector('.task-time')?.textContent}`);
+            return aDate - bDate;
+        });
+
+        tasks.forEach(task => zone.appendChild(task));
+    });
+}
+
 export function setupDragAndDrop(taskElement) {
-    // to make sure task card is able to drag
     if (!taskElement.draggable) {
         taskElement.draggable = true;
     }
 
-    //  start drag
     taskElement.addEventListener('dragstart', function(e) {
         e.dataTransfer.setData('text/plain', taskElement.dataset.id);
         e.dataTransfer.effectAllowed = 'move';
         taskElement.classList.add('dragging');
         
-        // hide the original element
         setTimeout(() => {
             taskElement.style.display = 'none';
         }, 0);
     });
 
-    // end of drag
     taskElement.addEventListener('dragend', function(e) {
         taskElement.classList.remove('dragging');
         taskElement.style.display = '';
-        
         document.querySelectorAll('.drop-zone').forEach(zone => {
             zone.classList.remove('drag-over');
         });
@@ -42,7 +64,6 @@ export function setupDropZones() {
         });
 
         zone.addEventListener('dragleave', function(e) {
-            // Only remove drag-over if we're actually leaving the zone
             if (!zone.contains(e.relatedTarget)) {
                 zone.classList.remove('drag-over');
             }
@@ -69,7 +90,6 @@ export function setupDropZones() {
 }
 
 function moveTaskToStatus(taskId, newStatus, taskElement, targetZone) {
-    // Update task status in database
     fetch(`/update_task_status/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -78,36 +98,31 @@ function moveTaskToStatus(taskId, newStatus, taskElement, targetZone) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // remove task from current 
             taskElement.remove();
-            
-            // update target zone
+
             if (targetZone.dataset.empty === 'true') {
-                // Remove empty state
                 targetZone.innerHTML = '';
                 targetZone.removeAttribute('data-empty');
             }
-            
-            // add task to new location
+
             targetZone.appendChild(taskElement);
-            
-            // show toasty!
+
+            // sort tasks after appending
+            sortTasks(targetZone);
+
             showTaskMovedFeedback(taskElement, newStatus);
         } else {
             console.error('Failed to update task status');
-            // if update failed, reload back to location
             window.location.reload();
         }
     })
     .catch(error => {
         console.error('Error updating task status:', error);
-        // Restore original position if error occurred
         window.location.reload();
     });
 }
 
 function moveCollabTaskToStatus(taskId, newStatus, taskElement, targetZone) {
-    // Update task status in database
     fetch(`/update_collab_task_status/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -116,34 +131,30 @@ function moveCollabTaskToStatus(taskId, newStatus, taskElement, targetZone) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            // remove task from current 
             taskElement.remove();
-            
-            // update target zone
+
             if (targetZone.querySelector('.empty-state')) {
                 targetZone.innerHTML = '';
             }
-            
-            // add task to new location
+
             targetZone.appendChild(taskElement);
-            
-            // show toasty!
+
+            // sort tasks after appending
+            sortTasks(targetZone);
+
             showTaskMovedFeedback(taskElement, newStatus);
         } else {
             console.error('Failed to update task status');
-            // if update failed, reload back to location
             window.location.reload();
         }
     })
     .catch(error => {
         console.error('Error updating task status:', error);
-        // Restore original position if error occurred
         window.location.reload();
     });
 }
 
 function showTaskMovedFeedback(taskElement, status) {
-    // animation to show the task was moved
     taskElement.style.transform = 'scale(1.05)';
     taskElement.style.boxShadow = '0 8px 25px #043915';
     
@@ -152,7 +163,6 @@ function showTaskMovedFeedback(taskElement, status) {
         taskElement.style.boxShadow = '';
     }, 500);
 
-    // toast
     const toast = document.createElement('div');
     toast.className = 'status-toast';
     

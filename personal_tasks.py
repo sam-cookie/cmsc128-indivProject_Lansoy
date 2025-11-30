@@ -9,36 +9,47 @@ TASK_DB = "tododatabase.db"
 
 @personal_bp.route("/profile")
 def profile():
-    if "username" not in session:
-        session["message"] = "Please log in to view your profile."
-        return redirect(url_for("login"))
-    username = session["username"]
+    username = session.get("username") 
 
-    # get user info
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT full_name, email, username FROM accounts WHERE username=?", (username,))
-        user = cursor.fetchone()
-    user_data = {"full_name": user[0], "email": user[1], "username": user[2]}
+    user_data = None
+    if username:
+        with sqlite3.connect(DB_NAME) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT full_name, email, username FROM accounts WHERE username=?", (username,))
+            user = cursor.fetchone()
+            if user:
+                user_data = {"full_name": user[0], "email": user[1], "username": user[2]}
 
-    # get user's tasks
     with sqlite3.connect(TASK_DB) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM tasks WHERE username=? AND status='backlog'", (username,))
-        backlog_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
+        if username:
+            cursor.execute("SELECT * FROM tasks WHERE username=? AND status='backlog'", (username,))
+            backlog_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
 
-        cursor.execute("SELECT * FROM tasks WHERE username=? AND status='in-progress'", (username,))
-        in_progress_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
+            cursor.execute("SELECT * FROM tasks WHERE username=? AND status='in-progress'", (username,))
+            in_progress_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
 
-        cursor.execute("SELECT * FROM tasks WHERE username=? AND status='completed'", (username,))
-        completed_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
+            cursor.execute("SELECT * FROM tasks WHERE username=? AND status='completed'", (username,))
+            completed_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+        else:
+            cursor.execute("SELECT * FROM tasks WHERE status='backlog'")
+            backlog_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
 
-    return render_template("profile.html",
-                           user=user_data,
-                           username=username,
-                           tasks=backlog_tasks,
-                           in_progress_tasks=in_progress_tasks,
-                           completed_tasks=completed_tasks)
+            cursor.execute("SELECT * FROM tasks WHERE status='in-progress'")
+            in_progress_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+
+            cursor.execute("SELECT * FROM tasks WHERE status='completed'")
+            completed_tasks = [dict(zip([col[0] for col in cursor.description], row)) for row in cursor.fetchall()]
+
+    return render_template(
+        "profile.html",
+        user=user_data,
+        username=username,
+        tasks=backlog_tasks,
+        in_progress_tasks=in_progress_tasks,
+        completed_tasks=completed_tasks
+    )
+
 
 @personal_bp.route("/add_task", methods=["POST"])
 def add_task():

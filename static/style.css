@@ -481,7 +481,7 @@ body.sidebar-collapsed {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: #000000;
+    background: #b7c4e3;
     color: white;
     padding: 1rem 1.5rem;
     border-radius: 20px;
@@ -492,7 +492,7 @@ body.sidebar-collapsed {
     align-items: center;
     gap: 1rem;
     animation: slideInFromBottom 0.3s ease-out;
-    border: 1px solid #4b5563;
+    border: 1px solid #0f1b37;
     backdrop-filter: blur(10px);
     min-width: 280px;
     max-width: 90vw;
@@ -543,7 +543,7 @@ body.sidebar-collapsed {
     font-family: 'Inter', sans-serif;
     top: 20px;
     right: 20px;
-    background: #778873;
+    background: #0f1b37;
     color: white;
     padding: 1rem 1.5rem;
     border-radius: 12px;
@@ -557,7 +557,7 @@ body.sidebar-collapsed {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #778873;
+    background: #0f1b37;
     color: white;
     padding: 1rem 1.5rem;
     border-radius: 12px;
@@ -568,24 +568,22 @@ body.sidebar-collapsed {
 }
 
 .empty-state {
-    /* margin-bottom:1rem; */
-    display: flex;
+    margin-top: 0 !important;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    color: #ffffff;
+    justify-content: flex-start !important;
+    color: #ffffff !important; 
     text-align: center;
-    padding: 40px 20px;
 }
 
 .empty-state i {
     font-size: 3rem;
-    margin-bottom: 1rem;
-    top:60rem;
+    /* margin-bottom: 1rem; */
     opacity: 0.5;
 }
 
 .empty-state p {
+    top: 2rem !important;
     font-size: 1rem;
     color: #ffffff;
 }
@@ -720,24 +718,4 @@ body.sidebar-collapsed {
 
 .edit-overlay input:valid {
     border-color: #38a169;
-}
-
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #20146e;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 8px;
-    font-size: 15px;
-    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.4s ease;
-    z-index: 9999;
-}
-.toast.show {
-    opacity: 1;
-    transform: translateY(0);
 }

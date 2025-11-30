@@ -84,13 +84,11 @@ export function initializeTaskCreation() {
                 // SMARTER CONTAINER DETECTION
                 let backlogContainer;
                 if (isCollaboration) {
-                    // For collaboration: use the same structure as collab_tasks.html
                     backlogContainer = document.querySelector('[data-status="backlog"] .drop-zone') || 
                                       document.querySelector('[data-status="backlog"]') ||
                                       document.querySelector('.column[data-status="backlog"] .drop-zone') ||
                                       document.querySelector('.drop-zone[data-status="backlog"]');
                 } else {
-                    // For personal tasks: handle both old and new structures
                     backlogContainer = document.querySelector('#task-card') || 
                                       document.querySelector('[data-status="backlog"] .drop-zone') ||
                                       document.querySelector('.column[data-status="backlog"] .drop-zone') ||
@@ -156,13 +154,10 @@ export function initializeTaskCreation() {
     initializeEmptyStates();
 }
 
-// ADD THIS HELPER FUNCTION
 function removeAllEmptyStates(container) {
-    // Remove styled empty states
     const emptyStates = container.querySelectorAll('.empty-state');
     emptyStates.forEach(state => state.remove());
     
-    // Remove any old text empty states
     const elements = container.querySelectorAll('p, i, div');
     elements.forEach(el => {
         if (el.textContent.includes('No tasks') || 
@@ -176,15 +171,11 @@ function removeAllEmptyStates(container) {
 }
 
 function initializeEmptyStates() {
-    // Find all drop zones and ensure they have proper empty states
     const dropZones = document.querySelectorAll('.drop-zone');
     
     dropZones.forEach(zone => {
         const hasTasks = zone.querySelector('.task-card');
         const hasEmptyState = zone.querySelector('.empty-state');
-        
-        // MORE AGGRESSIVE CLEANUP OF OLD EMPTY STATES
-        // Remove any text nodes or elements that contain empty state messages
         const walker = document.createTreeWalker(
             zone,
             NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
@@ -211,7 +202,6 @@ function initializeEmptyStates() {
             }
         }
         
-        // Remove the identified nodes
         nodesToRemove.forEach(node => {
             if (node.parentNode) {
                 node.parentNode.removeChild(node);
