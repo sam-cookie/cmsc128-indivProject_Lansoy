@@ -1,38 +1,45 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
-
-
-#need to ensure sessions
-#improving ui
-#connect everything to main todolist
+from database import init_db, init_tasks_db, init_collaborations_db
+from personal_tasks import personal_bp
+from collaboration import collab_bp
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
+# Register blueprints
+app.register_blueprint(personal_bp)
+app.register_blueprint(collab_bp)
+
+# DB files
 DB_NAME = "accounts.db"
+TASK_DB = "tododatabase.db"
+COLLAB_DB = "collaborations.db"
+
+def login_required(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        if "username" not in session:
+            session["message"] = "Session expired. Please log in again."
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return wrapper
+
+
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 
 @app.route("/")
 def home():
     return redirect("/login")
 
-def init_db():
-    if not os.path.exists(DB_NAME):
-        with sqlite3.connect(DB_NAME) as conn:
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS accounts (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    full_name TEXT NOT NULL,
-                    email TEXT UNIQUE NOT NULL,
-                    username TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    security_question TEXT NOT NULL
-                )
-            """)
-        print("Database created successfully.")
-    else:
-        print("Database already exists.")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -49,18 +56,20 @@ def login():
             row = cursor.fetchone()
 
         if row and check_password_hash(row[0], password):
-            session["username"] = username  # <-- store logged-in user
-            return redirect(url_for("profile", username=username))
+            session["username"] = username
+            return redirect(url_for("personal.profile"))
         else:
             error = "Invalid username or password."
 
     return render_template("accounts.html", error=error, message=message)
 
+
 @app.route("/logout")
 def logout():
-    session.pop("username", None)
+    session.clear()
     session["message"] = "Logged out successfully."
     return redirect(url_for("login"))
+
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -74,17 +83,15 @@ def register():
         password = request.form["password"]
         security_question = request.form["securityQuestion"]
 
-        # check if password is at least 8 characters
-        if len(password) <  8: 
+        if len(password) < 8:
             error = "Password must be at least 8 characters long."
             return render_template("register.html", message=message, error=error)
-
         if "@" not in email:
             error = "Please enter a valid email address."
             return render_template("register.html", message=message, error=error)
 
-        hashed_security_question = generate_password_hash(security_question)
         hashed_password = generate_password_hash(password)
+        hashed_security_question = generate_password_hash(security_question)
 
         try:
             with sqlite3.connect(DB_NAME) as conn:
@@ -101,26 +108,23 @@ def register():
 
     return render_template("register.html", message=message, error=error)
 
-@app.route("/editpassword/<username>", methods=["GET", "POST"])
-def edit_password(username):
 
+@app.route("/editpassword/<username>", methods=["GET", "POST"])
+@login_required
+def edit_password(username):
     message = None
     error = None
 
     if request.method == "POST":
         new_password = request.form["password"]
-        if len(new_password) <  8: 
+        if len(new_password) < 8:
             error = "Password must be at least 8 characters long."
             return render_template("editpassword.html", message=message, error=error)
 
         hashed_password = generate_password_hash(new_password)
         with sqlite3.connect(DB_NAME) as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                UPDATE accounts
-                SET password = ?
-                WHERE username = ?
-            """, (hashed_password, username))
+            cursor.execute("UPDATE accounts SET password = ? WHERE username = ?", (hashed_password, username))
             conn.commit()
 
         session["message"] = "Password updated successfully! You may login now."
@@ -128,10 +132,10 @@ def edit_password(username):
 
     return render_template("editpassword.html", username=username, message=message)
 
+
 @app.route("/forgotpassword", methods=["GET", "POST"])
 def forgot_password():
     error = None
-
     if request.method == "POST":
         username = request.form["username"]
         answer = request.form["securityQuestion"]
@@ -145,9 +149,7 @@ def forgot_password():
             error = "User not found."
             return render_template("forgotpassword.html", error=error)
 
-        correct_answer = row[0]
-
-        if check_password_hash(correct_answer, answer):
+        if check_password_hash(row[0], answer):
             session["message"] = "Security answer correct. Please set your new password."
             return redirect(url_for("edit_password", username=username))
         else:
@@ -155,7 +157,9 @@ def forgot_password():
 
     return render_template("forgotpassword.html", error=error)
 
+
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
+@login_required
 def edit_profile(username):
     message = None
     error = None
@@ -165,82 +169,52 @@ def edit_profile(username):
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
         user = cursor.fetchone()
 
-        if not user:
-            session["message"] = "User not found."
-            return redirect(url_for("login"))
-    
-
+    if not user:
+        session["message"] = "User not found."
+        return redirect(url_for("login"))
 
     if request.method == "POST":
-        # implement not asking for anything when changing only one field
         new_name = request.form["fullName"]
         new_username = request.form["username"]
         new_email = request.form["email"]
         new_password = request.form["password"]
-        if len(new_password) < 8:
-            error = "Password must be at least 8 characters long."
-            return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
-        hashed_password = generate_password_hash(new_password)
         try:
             with sqlite3.connect(DB_NAME) as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
-                    UPDATE accounts
-                    SET full_name = ?, username = ?, email = ?, password = ?
-                    WHERE username = ?
-                """, (new_name, new_username, new_email, hashed_password, username))
+
+                if new_password.strip() == "":
+                    cursor.execute("""
+                        UPDATE accounts SET full_name=?, username=?, email=? WHERE username=?
+                    """, (new_name, new_username, new_email, username))
+                else:
+                    if len(new_password) < 8:
+                        error = "Password must be at least 8 characters long."
+                        return render_template(
+                            "editprofile.html",
+                            user={"username": user[2], "email": user[1]},
+                            error=error,
+                            message=message
+                        )
+
+                    hashed_password = generate_password_hash(new_password)
+                    cursor.execute("""
+                        UPDATE accounts SET full_name=?, username=?, email=?, password=? WHERE username=?
+                    """, (new_name, new_username, new_email, hashed_password, username))
+
                 conn.commit()
-            session["username"] = new_username  # update session if username changed
-            session["message"] = "Profile updated successfully!"
-            return redirect(url_for("profile", username=new_username))
+
+            session["username"] = new_username
+            return redirect(url_for("personal.profile"))
+
         except sqlite3.IntegrityError:
             error = "Username or email already exists."
 
     return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
 
-@app.route("/profile")
-def profile():
-    if "username" not in session:
-        session["message"] = "please log in to view your profile."
-        return redirect(url_for("login"))
-
-    username = session["username"]
-
-    # get user info from accounts.db
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
-        user = cursor.fetchone()
-
-    if not user:
-        session["message"] = "user not found."
-        return redirect(url_for("login"))
-
-    user_data = {"full_name": user[0], "email": user[1], "username": user[2]}
-
-    # get tasks from tododatabase.db
-    with sqlite3.connect("tododatabase.db") as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM tasks WHERE username = ? AND status='backlog'", (username,))
-        backlog_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
-
-        cursor.execute("SELECT * FROM tasks WHERE username = ? AND status='in-progress'", (username,))
-        in_progress_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
-
-        cursor.execute("SELECT * FROM tasks WHERE username = ? AND status='completed'", (username,))
-        completed_tasks = [dict(zip([column[0] for column in cursor.description], row)) for row in cursor.fetchall()]
-
-    return render_template(
-        "profile.html",
-        user=user_data,
-        tasks=backlog_tasks,
-        in_progress_tasks=in_progress_tasks,
-        completed_tasks=completed_tasks
-    )
-
-
 
 if __name__ == "__main__":
     init_db()
+    init_tasks_db()
+    init_collaborations_db()
     app.run(debug=True)

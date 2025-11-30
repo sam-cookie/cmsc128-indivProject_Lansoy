@@ -135,15 +135,22 @@ def forgot_password():
 
 @app.route("/editprofile/<username>", methods=["GET", "POST"])
 def edit_profile(username):
-    message = None
     error = None
+
     with sqlite3.connect(DB_NAME) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT full_name, email, username FROM accounts WHERE username = ?", (username,))
         user = cursor.fetchone()
+
     if not user:
         session["message"] = "User not found."
         return redirect(url_for("login"))
+
+    user_data = {
+        "full_name": user[0],
+        "email": user[1],
+        "username": user[2]
+    }
 
     if request.method == "POST":
         new_name = request.form["fullName"]
@@ -154,35 +161,51 @@ def edit_profile(username):
         try:
             with sqlite3.connect(DB_NAME) as conn:
                 cursor = conn.cursor()
+
                 if new_password.strip() == "":
                     cursor.execute("""
-                        UPDATE accounts SET full_name=?, username=?, email=? WHERE username=?
+                        UPDATE accounts 
+                        SET full_name=?, username=?, email=? 
+                        WHERE username=?
                     """, (new_name, new_username, new_email, username))
                 else:
                     if len(new_password) < 8:
                         error = "Password must be at least 8 characters long."
                         return render_template(
                             "editprofile.html",
-                            user={"username": user[2], "email": user[1]},
+                            user=user_data,
                             error=error,
-                            message=message
+                            message=None
                         )
 
                     hashed_password = generate_password_hash(new_password)
                     cursor.execute("""
-                        UPDATE accounts SET full_name=?, username=?, email=?, password=? WHERE username=?
+                        UPDATE accounts 
+                        SET full_name=?, username=?, email=?, password=? 
+                        WHERE username=?
                     """, (new_name, new_username, new_email, hashed_password, username))
 
                 conn.commit()
 
+            # update session username
             session["username"] = new_username
+            # set success message for toast
             session["message"] = "Profile updated successfully!"
-            return redirect(url_for("personal.profile"))
+            return redirect(url_for("edit_profile", username=new_username))
 
         except sqlite3.IntegrityError:
             error = "Username or email already exists."
 
-    return render_template("editprofile.html", user={"username": user[2], "email": user[1]}, error=error, message=message)
+    # pop message from session so it only shows once
+    message = session.pop("message", None)
+
+    return render_template(
+        "editprofile.html",
+        user=user_data,
+        error=error,
+        message=message
+    )
+
 
 if __name__ == "__main__":
     init_db()
