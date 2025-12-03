@@ -5,7 +5,7 @@ personal_bp = Blueprint('personal', __name__)
 
 # DB files
 DB_NAME = "accounts.db"
-TASK_DB = "tododatabase.db"
+TASK_DB = "todo.db"
 
 @personal_bp.route("/profile")
 def profile():

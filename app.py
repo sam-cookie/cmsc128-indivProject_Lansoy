@@ -13,7 +13,7 @@ app.register_blueprint(personal_bp)
 app.register_blueprint(collab_bp)
 
 DB_NAME = "accounts.db"
-TASK_DB = "tododatabase.db"
+TASK_DB = "todo.db"
 COLLAB_DB = "collaborations.db"
 
 def login_required(f):

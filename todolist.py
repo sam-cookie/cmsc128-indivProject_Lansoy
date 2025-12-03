@@ -3,23 +3,9 @@ import sqlite3
 
 app = Flask(__name__)
 
-def init_tasks_db():
-    with sqlite3.connect("tododatabase.db") as conn:
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS tasks (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,   -- link tasks to users
-                name TEXT NOT NULL,
-                priority TEXT,
-                date TEXT,
-                time TEXT,
-                status TEXT DEFAULT 'backlog'
-            )
-        """)
-
 @app.route('/')
 def index():
-    conn = sqlite3.connect('tododatabase.db')
+    conn = sqlite3.connect('todo.db')
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     c.execute('''
@@ -85,7 +71,7 @@ def add_task():
     if not name:
         return jsonify({"error": "Task name is required"}), 400
 
-    with sqlite3.connect("tododatabase.db") as conn:
+    with sqlite3.connect("todo.db") as conn:
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO tasks (username, name, priority, date, time) VALUES (?, ?, ?, ?, ?)",
@@ -111,7 +97,7 @@ def edit_task(task_id):
     time = data.get('time')
     priority = data.get('priority')
 
-    conn = sqlite3.connect('tododatabase.db')
+    conn = sqlite3.connect('todo.db')
     c = conn.cursor()
     c.execute('''
         UPDATE tasks
@@ -125,7 +111,7 @@ def edit_task(task_id):
 
 @app.route('/delete_task/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    conn = sqlite3.connect('tododatabase.db')
+    conn = sqlite3.connect('todo.db')
     c = conn.cursor()
     c.execute('DELETE FROM tasks WHERE id = ?', (task_id,))
     conn.commit()
@@ -141,7 +127,7 @@ def update_task_status(task_id):
     if status not in ['backlog', 'in-progress', 'completed']:
         return jsonify({'success': False, 'error': 'Invalid status'})
     
-    conn = sqlite3.connect('tododatabase.db')
+    conn = sqlite3.connect('todo.db')
     c = conn.cursor()
     c.execute('UPDATE tasks SET status = ? WHERE id = ?', (status, task_id))
     conn.commit()
