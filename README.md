@@ -6,10 +6,13 @@ Database: SQLite (stored locally as accounts.db and collaborations.db)
 
 To use the web app, make sure to install the following: Python 3.x Flask SQLite
 
-To run the web app:
+To run the web app locally:
 Clone or download this project. Ensure all frontend files (html and CSS) and backend file (accounts.db) are in the same directory. Start the server with: py app.py
 
 Open your browser and go to: http://127.0.0.1:5000 or whichever is provided to you.
+
+To run the web app anywhere, click the link below:
+https://samsupercute.pythonanywhere.com/
 
 API ENDPOINTS
 
